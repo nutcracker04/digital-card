@@ -1207,6 +1207,27 @@ async function setServerActive(id) {
   }
 }
 
+async function deleteServerPass(id, label) {
+  const orch = getOrchBase();
+  if (!orch) return;
+  const name = (label && String(label).trim()) || 'this pass';
+  if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
+  try {
+    const r = await fetch(orch + '/api/passes/' + encodeURIComponent(id), { method: 'DELETE' });
+    if (r.status === 204 || r.ok) {
+      addLog('Pass deleted.', 'ok');
+      void renderPassesList();
+      return;
+    }
+    const j = await r.json().catch(() => ({}));
+    const d = j.detail;
+    const msg = typeof d === 'string' ? d : (Array.isArray(d) ? d.map((x) => (x && x.msg) || x).join(', ') : (r.status + ''));
+    addLog('Could not delete pass: ' + (msg || 'request failed'), 'err');
+  } catch (e) {
+    addLog('Network error: ' + e.message, 'err');
+  }
+}
+
 async function renderPassesList() {
   const container = document.getElementById('passesList');
   if (!container) return;
@@ -1309,12 +1330,15 @@ ${isActive ? '<span class="badge badge-active">Active pass is set</span>' : '<sp
           <div class="saved-pass-name">${isActive ? '<span class="badge badge-active" style="margin-right:4px">Active</span>' : ''}${esc(label)}</div>
           <div class="saved-pass-date">${esc(dateStr)}</div>
         </div>
-        <div class="saved-pass-actions" style="flex-wrap:wrap;justify-content:flex-end">
+        <div class="saved-pass-actions" style="flex-wrap:wrap;justify-content:flex-end;gap:5px">
           <button class="btn btn-xs btn-accent" type="button" data-act="${esc(pass.id)}">Set active</button>
+          <button class="btn btn-xs btn-danger" type="button" data-del="${esc(pass.id)}">Delete</button>
         </div>
       </div>`;
         const btn = card.querySelector('button[data-act]');
         if (btn) btn.addEventListener('click', () => setServerActive(pass.id));
+        const delBtn = card.querySelector('button[data-del]');
+        if (delBtn) delBtn.addEventListener('click', () => deleteServerPass(pass.id, label));
         listEl.appendChild(card);
       }
       frag.appendChild(listEl);

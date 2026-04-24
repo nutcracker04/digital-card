@@ -10,7 +10,8 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import Response
 from pydantic import BaseModel
 
-from app.db_mongo import passes_collection
+from app.db_mongo import SETTINGS_ID, passes_collection, settings_collection
+from app.routers.settings import read_active_pass_id
 from app.deps import walletwallet_api_key
 from app.walletwallet_client import fetch_pkpass_or_raise
 from app.walletwallet_payload import validate_walletwallet_body
@@ -157,3 +158,27 @@ def download_pkpass(pass_id: str) -> Response:
         media_type="application/vnd.apple.pkpass",
         headers={"Content-Disposition": 'attachment; filename="card.pkpass"'},
     )
+
+
+@router.delete(
+    "/passes/{pass_id}",
+    status_code=204,
+    response_class=Response,
+)
+def delete_pass(pass_id: str) -> Response:
+    t = pass_id.strip()
+    if len(t) != 24 or not ObjectId.is_valid(t):
+        raise HTTPException(status_code=400, detail="Invalid pass id")
+    col = _col_or_503()
+    oid = ObjectId(t)
+    res = col.delete_one({"_id": oid})
+    if res.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Pass not found")
+    sc = settings_collection()
+    if sc is not None and read_active_pass_id() == t:
+        sc.update_one(
+            {"_id": SETTINGS_ID},
+            {"$set": {"active_pass_id": None}},
+            upsert=True,
+        )
+    return Response(status_code=204)
