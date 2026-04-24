@@ -1362,7 +1362,20 @@ async function renderPassesList() {
         const err = await rPass.json().catch(() => ({}));
         const d = err.detail;
         const msg = typeof d === 'string' ? d : (Array.isArray(d) ? d.map((x) => (x && x.msg) || x).join(', ') : (rPass.status + ''));
-        container.innerHTML = `<div class="passes-empty"><h3>Couldn’t load passes</h3><p>${esc(String(msg))}. Check Pass server URL and CORS on the server (CORS_ORIGINS).</p></div>`;
+        const st = rPass.status;
+        let hint = '';
+        if (st === 0 || st === 502) {
+          hint = 'Network or server unreachable. If the PWA and API are on different domains, set CORS_ORIGINS on the API to your PWA origin (or *).';
+        } else if (st >= 500) {
+          hint = 'This is a server error — open your host’s logs (e.g. Render → Logs) to see the stack trace. Often: MongoDB connection, bad env, or data shape.';
+        } else if (st === 401 || st === 403) {
+          hint = 'Not authorized to call this API.';
+        } else if (st === 503) {
+          hint = 'Service unavailable — often MONGODB_URI not set, Mongo down, or Atlas IP allowlist blocking Render.';
+        } else {
+          hint = 'Check the Pass server URL in API settings (must be your API base, no path suffix).';
+        }
+        container.innerHTML = `<div class="passes-empty"><h3>Couldn’t load passes</h3><p><strong>HTTP ${st}</strong> — ${esc(String(msg))}</p><p style="margin-top:8px;opacity:0.9;">${esc(hint)}</p></div>`;
         return;
       }
       const list = await rPass.json();

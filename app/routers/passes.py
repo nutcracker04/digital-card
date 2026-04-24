@@ -79,16 +79,40 @@ def create_pass(body: dict[str, Any]) -> PassListItem:
     )
 
 
+def _label_to_str(lab: Any) -> str | None:
+    if lab is None:
+        return None
+    if isinstance(lab, str):
+        return lab
+    return str(lab)[:200]
+
+
+def _coerce_created_at(v: Any) -> datetime:
+    if isinstance(v, datetime):
+        return v
+    if v is None:
+        return datetime.now(timezone.utc).replace(tzinfo=None)
+    if isinstance(v, (int, float)):
+        return datetime.fromtimestamp(v, tz=timezone.utc).replace(tzinfo=None)
+    if isinstance(v, str):
+        s = v.strip()
+        if s:
+            try:
+                d = datetime.fromisoformat(s.replace("Z", "+00:00"))
+                return d.replace(tzinfo=None) if d.tzinfo else d
+            except ValueError:
+                pass
+    return datetime.now(timezone.utc).replace(tzinfo=None)
+
+
 def _serialize_doc(doc: dict[str, Any]) -> PassListItem:
     oid = doc.get("_id")
     if not isinstance(oid, ObjectId):
-        raise HTTPException(status_code=500, detail="Invalid pass document")
-    cr = doc.get("created_at")
-    if not isinstance(cr, datetime):
-        raise HTTPException(status_code=500, detail="Invalid pass document")
+        raise HTTPException(status_code=500, detail="Invalid pass document: bad _id")
+    cr = _coerce_created_at(doc.get("created_at"))
     return PassListItem(
         id=str(oid),
-        label=doc.get("label") if doc.get("label") is not None else None,
+        label=_label_to_str(doc.get("label")),
         created_at=_dt_iso_utc(cr),
     )
 
@@ -98,10 +122,23 @@ def _serialize_doc(doc: dict[str, Any]) -> PassListItem:
     response_model=list[PassListItem],
 )
 def list_passes() -> list[PassListItem]:
+    from pymongo.errors import PyMongoError
+
     col = _col_or_503()
     out: list[PassListItem] = []
-    for doc in col.find({}, {"pkpass": 0, "request_json": 0}).sort("created_at", -1):
-        out.append(_serialize_doc(doc))
+    try:
+        for doc in col.find({}, {"pkpass": 0, "request_json": 0}).sort("created_at", -1):
+            try:
+                out.append(_serialize_doc(doc))
+            except HTTPException as e:
+                if e.status_code == 500:
+                    continue
+                raise
+    except PyMongoError as e:
+        raise HTTPException(
+            status_code=503,
+            detail=f"MongoDB error: {e!s}. Check MONGODB_URI, Atlas network access, and that the user can read the database.",
+        ) from e
     return out
 
 
