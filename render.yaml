@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: digital-card
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install --upgrade pip && pip install .
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.13.13"
+      # Set in the Render dashboard (do not commit secrets):
+      #   WALLETWALLET_API_KEY — required
+      #   MONGODB_URI — optional; required for /api/passes and /v1/tap/{24_hex_objectid}
+      #   MONGO_DB_NAME — optional (default: digital_card)
+      - key: WALLETWALLET_API_KEY
+        sync: false
+      - key: MONGODB_URI
+        sync: false

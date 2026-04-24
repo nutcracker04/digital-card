@@ -1,0 +1,9 @@
+{
+  "name": "digital-card-frontend",
+  "private": true,
+  "description": "Static PWA; no build step. See README.md for static hosting options.",
+  "scripts": {
+    "serve": "npx --yes serve .",
+    "start": "npx --yes serve ."
+  }
+}

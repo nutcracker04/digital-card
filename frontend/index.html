@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#1a7a5e" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="PassForge" />
+<meta name="description" content="Generate signed Apple Wallet .pkpass files instantly." />
+<title>PassForge — Apple Wallet Pass Generator</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
+<link rel="icon" href="icons/icon-192.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+/* ─── Reset & Base ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; font-size: 16px; }
+body {
+  font-family: 'Sora', sans-serif;
+  background: #0a0f0d;
+  color: #e8ede9;
+  min-height: 100%;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── CSS Variables ─── */
+:root {
+  --bg-0: #0a0f0d;
+  --bg-1: #111a16;
+  --bg-2: #182119;
+  --bg-3: #1e2b22;
+  --accent: #1a7a5e;
+  --accent-hi: #22a07e;
+  --accent-glow: rgba(26,122,94,0.18);
+  --accent-dim: rgba(26,122,94,0.08);
+  --text-0: #e8ede9;
+  --text-1: #a0b5a5;
+  --text-2: #5a7a62;
+  --border: rgba(255,255,255,0.07);
+  --border-hi: rgba(255,255,255,0.13);
+  --border-accent: rgba(26,122,94,0.4);
+  --red: #e05252;
+  --red-bg: rgba(224,82,82,0.1);
+  --amber: #d4a043;
+  --amber-bg: rgba(212,160,67,0.1);
+  --green-text: #5ec98a;
+  --green-bg: rgba(94,201,138,0.1);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-xs: 5px;
+  --mono: 'DM Mono', monospace;
+  --shadow: 0 4px 24px rgba(0,0,0,0.5);
+  --pass-radius: 18px;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 2px; }
+
+/* ─── Layout ─── */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-width: 480px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ─── Header ─── */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+  padding-top: calc(16px + env(safe-area-inset-top));
+  border-bottom: 0.5px solid var(--border);
+  background: var(--bg-0);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-0);
+}
+.brand-icon {
+  width: 28px; height: 28px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.brand-icon svg { width: 16px; height: 16px; }
+.header-right { display: flex; align-items: center; gap: 8px; }
+.key-indicator {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--text-2);
+  background: var(--bg-2);
+  border: 0.5px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.key-indicator:hover { border-color: var(--border-accent); color: var(--text-1); }
+.key-indicator .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-2); }
+.key-indicator.ok .dot { background: var(--green-text); }
+.key-indicator.ok { color: var(--green-text); }
+.key-indicator.err .dot { background: var(--red); }
+.key-indicator.err { color: var(--red); }
+
+/* ─── Bottom nav ─── */
+.bottom-nav {
+  display: flex;
+  border-top: 0.5px solid var(--border);
+  background: var(--bg-0);
+  padding-bottom: env(safe-area-inset-bottom);
+  position: sticky;
+  bottom: 0;
+  z-index: 50;
+}
+.nav-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 10px 0 8px;
+  font-size: 10px; font-weight: 500; color: var(--text-2);
+  cursor: pointer; border: none; background: transparent;
+  transition: color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-item svg { width: 20px; height: 20px; }
+.nav-item.active { color: var(--accent-hi); }
+.nav-item:active { transform: scale(0.92); }
+
+/* ─── Content ─── */
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ─── Screens ─── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ─── Section headers ─── */
+.section-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-2);
+  margin: 0 0 10px;
+}
+
+/* ─── Cards ─── */
+.card {
+  background: var(--bg-1);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.card-title { font-size: 13px; font-weight: 500; color: var(--text-0); }
+
+/* ─── Form elements ─── */
+.form-group { margin-bottom: 12px; }
+.form-group:last-child { margin-bottom: 0; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+label {
+  display: block; font-size: 11px; font-weight: 500;
+  color: var(--text-2); margin-bottom: 5px; letter-spacing: 0.02em;
+}
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="url"],
+select,
+textarea {
+  width: 100%;
+  background: var(--bg-2);
+  border: 0.5px solid var(--border-hi);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  font-size: 13px;
+  font-family: 'Sora', sans-serif;
+  color: var(--text-0);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+input::placeholder, textarea::placeholder { color: var(--text-2); }
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a7a62' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 30px; }
+textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
+.field-hint { font-size: 10px; color: var(--text-2); margin-top: 4px; }
+
+/* ─── Buttons ─── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  border: 0.5px solid var(--border-hi);
+  font-size: 13px; font-weight: 500; font-family: 'Sora', sans-serif;
+  color: var(--text-0); background: var(--bg-2);
+  cursor: pointer; transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--bg-3); border-color: var(--border-accent); }
+.btn:active { transform: scale(0.97); }
+.btn-xs { padding: 5px 10px; font-size: 11px; border-radius: var(--radius-xs); }
+.btn-accent {
+  background: var(--accent); border-color: var(--accent-hi);
+  color: #fff;
+  box-shadow: 0 2px 16px var(--accent-glow);
+}
+.btn-accent:hover { background: var(--accent-hi); }
+.btn-full { width: 100%; }
+.btn-danger { color: var(--red); border-color: rgba(224,82,82,0.3); }
+.btn-danger:hover { background: var(--red-bg); }
+
+/* ─── Badges ─── */
+.badge {
+  display: inline-flex; align-items: center; padding: 2px 8px;
+  border-radius: 20px; font-size: 10px; font-weight: 600; letter-spacing: 0.03em;
+}
+.badge-pro { background: var(--accent-dim); color: var(--accent-hi); border: 0.5px solid var(--border-accent); }
+.badge-green { background: var(--green-bg); color: var(--green-text); }
+.badge-red { background: var(--red-bg); color: var(--red); }
+.badge-amber { background: var(--amber-bg); color: var(--amber); }
+
+/* ─── Pass Preview ─── */
+.pass-wrap {
+  perspective: 900px;
+  margin-bottom: 16px;
+}
+.pass-card {
+  border-radius: var(--pass-radius);
+  padding: 18px 18px 14px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.35s ease;
+  transform-style: preserve-3d;
+  min-height: 190px;
+  box-shadow: var(--shadow);
+}
+.pass-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%);
+  pointer-events: none;
+  border-radius: inherit;
+}
+.pass-noise {
+  position: absolute; inset: 0; opacity: 0.04; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.pass-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+.pass-logo-text { font-size: 13px; font-weight: 600; letter-spacing: 0.04em; opacity: 0.95; max-width: 55%; }
+.pass-header-area { text-align: right; }
+.pass-f-label { font-size: 8px; opacity: 0.55; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1px; }
+.pass-f-value { font-size: 14px; font-weight: 600; }
+.pass-primary-area { margin-bottom: 10px; }
+.pass-primary-area .pass-f-value { font-size: 22px; font-weight: 700; line-height: 1.1; }
+.pass-secondary-row { display: flex; gap: 18px; margin-bottom: 12px; }
+.pass-bottom { display: flex; align-items: flex-end; justify-content: space-between; }
+.pass-expiry { font-size: 9px; opacity: 0.5; letter-spacing: 0.04em; }
+.pass-barcode-wrap {
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.pass-barcode-wrap svg { display: block; }
+
+/* ─── Field rows ─── */
+.field-row {
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 6px;
+}
+.field-row input { flex: 1; font-size: 12px; padding: 7px 10px; }
+.field-row .sep { font-size: 11px; color: var(--text-2); flex-shrink: 0; }
+.remove-btn {
+  width: 26px; height: 26px; flex-shrink: 0;
+  border-radius: 50%; border: 0.5px solid var(--border);
+  background: transparent; color: var(--text-2);
+  cursor: pointer; font-size: 14px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s;
+}
+.remove-btn:hover { background: var(--red-bg); color: var(--red); border-color: rgba(224,82,82,0.3); }
+
+/* ─── Format selector ─── */
+.format-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.fmt-btn {
+  border: 0.5px solid var(--border-hi);
+  border-radius: var(--radius-sm);
+  padding: 8px 4px;
+  text-align: center; cursor: pointer;
+  background: var(--bg-2);
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.fmt-btn:active { transform: scale(0.95); }
+.fmt-btn.active { border-color: var(--accent); background: var(--accent-dim); }
+.fmt-name { font-size: 12px; font-weight: 600; color: var(--text-0); }
+.fmt-desc { font-size: 9px; color: var(--text-2); margin-top: 2px; }
+.fmt-btn.active .fmt-name { color: var(--accent-hi); }
+
+/* ─── Color swatches ─── */
+.swatch-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.swatch {
+  width: 30px; height: 30px; border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.15s, border-color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.swatch:active { transform: scale(0.9); }
+.swatch.active { border-color: rgba(255,255,255,0.7); transform: scale(1.12); }
+
+/* ─── Logs ─── */
+.log-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.log-item {
+  padding: 8px 12px; border-radius: var(--radius-xs);
+  font-size: 11px; font-family: var(--mono);
+  line-height: 1.4;
+}
+.log-item.ok { background: var(--green-bg); color: var(--green-text); }
+.log-item.err { background: var(--red-bg); color: var(--red); }
+.log-item.info { background: var(--bg-2); color: var(--text-1); }
+
+/* ─── Templates ─── */
+.template-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tpl-btn {
+  background: var(--bg-2); border: 0.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px;
+  cursor: pointer; text-align: left; transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.tpl-btn:hover { border-color: var(--border-accent); background: var(--accent-dim); }
+.tpl-btn:active { transform: scale(0.97); }
+.tpl-icon { font-size: 18px; margin-bottom: 5px; }
+.tpl-name { font-size: 12px; font-weight: 500; color: var(--text-0); }
+.tpl-desc { font-size: 10px; color: var(--text-2); margin-top: 2px; }
+
+/* ─── Settings ─── */
+.setting-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 0.5px solid var(--border);
+}
+.setting-row:last-child { border-bottom: none; padding-bottom: 0; }
+.setting-label { font-size: 13px; color: var(--text-0); }
+.setting-sub { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+
+/* ─── Spinner ─── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.25); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
+
+/* ─── Divider ─── */
+.divider { border: none; border-top: 0.5px solid var(--border); margin: 12px 0; }
+
+/* ─── Install banner ─── */
+#installBanner {
+  display: none;
+  margin: 0 0 12px;
+  background: linear-gradient(135deg, var(--accent-dim), transparent);
+  border: 0.5px solid var(--border-accent);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  align-items: center;
+  gap: 10px;
+}
+#installBanner.show { display: flex; }
+#installBanner .install-text { flex: 1; font-size: 12px; color: var(--text-1); }
+#installBanner .install-title { font-size: 13px; font-weight: 500; color: var(--text-0); margin-bottom: 2px; }
+
+/* ─── Desktop adaptation ─── */
+@media (min-width: 600px) {
+  .app-shell { max-width: 520px; }
+  .app-content { padding: 24px; }
+}
+@media (min-width: 900px) {
+  body { display: flex; align-items: center; justify-content: center; }
+  .app-shell {
+    max-width: 420px;
+    height: 92vh;
+    border: 0.5px solid var(--border);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+  }
+  .app-header { border-radius: 24px 24px 0 0; }
+  .bottom-nav { border-radius: 0 0 24px 24px; }
+}
+
+/* ─── Animations ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.screen.active { animation: fadeUp 0.2s ease both; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="3" width="14" height="10" rx="2" stroke="white" stroke-width="1.2"/>
+          <path d="M1 6h14" stroke="white" stroke-width="1.2"/>
+          <rect x="3" y="8.5" width="4" height="1.2" rx="0.6" fill="white"/>
+          <rect x="3" y="10.5" width="2.5" height="1" rx="0.5" fill="white" opacity="0.5"/>
+          <rect x="11" y="8" width="2" height="4" rx="0.5" fill="white" opacity="0.7"/>
+          <rect x="9.5" y="8" width="1" height="4" rx="0.3" fill="white" opacity="0.5"/>
+          <rect x="13" y="8" width="0.7" height="4" rx="0.3" fill="white" opacity="0.4"/>
+        </svg>
+      </div>
+      PassForge
+    </div>
+    <div class="header-right">
+      <div class="key-indicator" id="keyIndicator" onclick="showScreen('settings')">
+        <div class="dot"></div>
+        <span id="keyIndicatorLabel">No key</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <div class="app-content" id="appContent">
+
+    <!-- ══ BUILDER SCREEN ══ -->
+    <div id="screen-builder" class="screen active">
+
+      <!-- Install banner -->
+      <div id="installBanner">
+        <div style="font-size:22px;">📲</div>
+        <div class="install-text">
+          <div class="install-title">Add to Home Screen</div>
+          Install PassForge for offline access
+        </div>
+        <button class="btn btn-xs btn-accent" id="installBtn">Install</button>
+        <button class="btn btn-xs" onclick="document.getElementById('installBanner').classList.remove('show')" style="padding:5px 8px;">✕</button>
+      </div>
+
+      <!-- Live Pass Preview -->
+      <div class="section-label">Live preview</div>
+      <div class="pass-wrap">
+        <div class="pass-card" id="passCard" style="background:#1a3a28;">
+          <div class="pass-noise"></div>
+          <div class="pass-top">
+            <div class="pass-logo-text" id="pvLogoText">My Brand</div>
+            <div class="pass-header-area" id="pvHeaderArea" style="display:none">
+              <div class="pass-f-label" id="pvHeaderLabel">BALANCE</div>
+              <div class="pass-f-value" id="pvHeaderValue">—</div>
+            </div>
+          </div>
+          <div class="pass-primary-area" id="pvPrimaryArea" style="display:none">
+            <div class="pass-f-label" id="pvPrimaryLabel">CARD</div>
+            <div class="pass-f-value" id="pvPrimaryValue">—</div>
+          </div>
+          <div class="pass-secondary-row" id="pvSecRow" style="display:none">
+            <div>
+              <div class="pass-f-label" id="pvSecLabel">TIER</div>
+              <div class="pass-f-value" style="font-size:13px;font-weight:500;" id="pvSecValue">—</div>
+            </div>
+          </div>
+          <div class="pass-bottom">
+            <div class="pass-expiry" id="pvExpiry"></div>
+            <div class="pass-barcode-wrap">
+              <svg id="barcodePreview" width="56" height="56"></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Card -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Pass content</span>
+        </div>
+
+        <div class="form-row" style="margin-bottom:12px;">
+          <div class="form-group" style="margin:0">
+            <label>Logo text</label>
+            <input type="text" id="logoText" placeholder="My Brand" oninput="syncPreview()" autocomplete="off" />
+          </div>
+          <div class="form-group" style="margin:0">
+            <label>Barcode value *</label>
+            <input type="text" id="barcodeValue" placeholder="MEMBER-001" oninput="syncPreview()" autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Barcode format</label>
+          <div class="format-grid">
+            <div class="fmt-btn active" onclick="pickFormat('QR',this)">
+              <div class="fmt-name">QR</div><div class="fmt-desc">General</div>
+            </div>
+            <div class="fmt-btn" onclick="pickFormat('PDF417',this)">
+              <div class="fmt-name">PDF417</div><div class="fmt-desc">Boarding</div>
+            </div>
+            <div class="fmt-btn" onclick="pickFormat('Aztec',this)">
+              <div class="fmt-name">Aztec</div><div class="fmt-desc">Transit</div>
+            </div>
+            <div class="fmt-btn" onclick="pickFormat('Code128',this)">
+              <div class="fmt-name">Code128</div><div class="fmt-desc">Retail</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fields Card -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Fields</span>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
+            <label style="margin:0;font-size:10px;">Header fields <span style="opacity:0.6">(top-right)</span></label>
+            <button class="btn btn-xs" onclick="addField('header')">+ Add</button>
+          </div>
+          <div id="headerFields"></div>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
+            <label style="margin:0;font-size:10px;">Primary fields <span style="opacity:0.6">(main)</span></label>
+            <button class="btn btn-xs" onclick="addField('primary')">+ Add</button>
+          </div>
+          <div id="primaryFields"></div>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
+            <label style="margin:0;font-size:10px;">Secondary fields <span style="opacity:0.6">(below primary)</span></label>
+            <button class="btn btn-xs" onclick="addField('secondary')">+ Add</button>
+          </div>
+          <div id="secondaryFields"></div>
+        </div>
+
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
+            <label style="margin:0;font-size:10px;">Back fields <span style="opacity:0.6">(back of pass)</span></label>
+            <button class="btn btn-xs" onclick="addField('back')">+ Add</button>
+          </div>
+          <div id="backFields"></div>
+          <div id="backPreview" style="display:none;background:var(--bg-2);border-radius:8px;padding:10px;margin-top:8px;"></div>
+        </div>
+      </div>
+
+      <!-- Appearance Card -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Appearance</span>
+        </div>
+
+        <div class="form-group">
+          <label>Color theme</label>
+          <div class="swatch-row" id="swatchRow">
+            <div class="swatch active" style="background:#1a3a28;" data-preset="dark" onclick="pickPreset('dark',this)"></div>
+            <div class="swatch" style="background:#1e3a8a;" data-preset="blue" onclick="pickPreset('blue',this)"></div>
+            <div class="swatch" style="background:#14532d;" data-preset="green" onclick="pickPreset('green',this)"></div>
+            <div class="swatch" style="background:#7f1d1d;" data-preset="red" onclick="pickPreset('red',this)"></div>
+            <div class="swatch" style="background:#4c1d95;" data-preset="purple" onclick="pickPreset('purple',this)"></div>
+            <div class="swatch" style="background:#7c2d12;" data-preset="orange" onclick="pickPreset('orange',this)"></div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group" style="margin:0">
+            <label>Custom hex color <span class="badge badge-pro">Pro</span></label>
+            <input type="text" id="customColor" placeholder="#1e40af" oninput="syncPreview()" autocomplete="off" />
+          </div>
+          <div class="form-group" style="margin:0">
+            <label>Expiry</label>
+            <select id="expirySelect" onchange="handleExpiry()">
+              <option value="">None</option>
+              <option value="30">30 days</option>
+              <option value="90">90 days</option>
+              <option value="365">1 year</option>
+              <option value="custom">Custom…</option>
+            </select>
+          </div>
+        </div>
+        <div id="customExpRow" style="display:none;margin-top:10px;" class="form-group">
+          <label>Custom days (1–3650)</label>
+          <input type="number" id="customExpDays" min="1" max="3650" placeholder="180" oninput="syncPreview()" />
+        </div>
+
+        <hr class="divider" />
+
+        <div class="form-group">
+          <label>Logo URL <span class="badge badge-pro">Pro</span></label>
+          <input type="url" id="logoURL" placeholder="https://example.com/logo.png" />
+          <div class="field-hint">HTTPS only · PNG data URIs accepted</div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group" style="margin:0">
+            <label>Thumbnail URL <span class="badge badge-pro">Pro</span></label>
+            <input type="url" id="thumbnailURL" placeholder="https://…/thumb.png" />
+          </div>
+          <div class="form-group" style="margin:0">
+            <label>Strip image URL <span class="badge badge-pro">Pro</span></label>
+            <input type="url" id="stripURL" placeholder="https://…/strip.png" />
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top:10px;">
+          <label>Accessibility description</label>
+          <input type="text" id="description" placeholder="Defaults to logo text" />
+        </div>
+      </div>
+
+      <!-- Generate -->
+      <div class="card" style="background:var(--accent-dim);border-color:var(--border-accent);">
+        <button class="btn btn-accent btn-full" id="generateBtn" onclick="generatePass()">
+          <span id="generateLabel">Generate .pkpass</span>
+        </button>
+        <div class="log-list" id="logList"></div>
+      </div>
+    </div>
+
+    <!-- ══ TEMPLATES SCREEN ══ -->
+    <div id="screen-templates" class="screen">
+
+      <div class="section-label">Networking</div>
+      <div class="template-grid">
+        <div class="tpl-btn" onclick="loadTemplate('biz_card')">
+          <div class="tpl-icon">🤝</div>
+          <div class="tpl-name">Business Card</div>
+          <div class="tpl-desc">Digital visiting card + QR</div>
+        </div>
+        <div class="tpl-btn" onclick="loadTemplate('founder')">
+          <div class="tpl-icon">🚀</div>
+          <div class="tpl-name">Founder Pass</div>
+          <div class="tpl-desc">Startup pitch + deck link</div>
+        </div>
+        <div class="tpl-btn" onclick="loadTemplate('freelancer')">
+          <div class="tpl-icon">🎨</div>
+          <div class="tpl-name">Freelancer</div>
+          <div class="tpl-desc">Rate + availability + portfolio</div>
+        </div>
+        <div class="tpl-btn" onclick="loadTemplate('speaker')">
+          <div class="tpl-icon">🎤</div>
+          <div class="tpl-name">Speaker Pass</div>
+          <div class="tpl-desc">Topic + booking link</div>
+        </div>
+        <div class="tpl-btn" onclick="loadTemplate('job_seeker')">
+          <div class="tpl-icon">💼</div>
+          <div class="tpl-name">Job Seeker</div>
+          <div class="tpl-desc">Open roles + resume QR</div>
+        </div>
+        <div class="tpl-btn" onclick="loadTemplate('conf_badge')">
+          <div class="tpl-icon">🪪</div>
+          <div class="tpl-name">Conf. Badge</div>
+          <div class="tpl-desc">Event attendee + company</div>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:18px;">Sales</div>
+      <div class="template-grid">
+        <div class="tpl-btn" onclick="loadTemplate('sales_intro')">
+          <div class="tpl-icon">💬</div>
+          <div class="tpl-name">Sales Rep Card</div>
+          <div class="tpl-desc">AE intro + book a demo</div>
+        </div>
+        <div class="tpl-btn" onclick="loadTemplate('demo_invite')">
+          <div class="tpl-icon">🖥️</div>
+          <div class="tpl-name">Demo Invite</div>
+          <div class="tpl-desc">Slot + join link + prep</div>
+        </div>
+        <div class="tpl-btn" onclick="loadTemplate('proposal')">
+          <div class="tpl-icon">📋</div>
+          <div class="tpl-name">Proposal Pass</div>
+          <div class="tpl-desc">Deal value + expiry date</div>
+        </div>
+        <div class="tpl-btn" onclick="loadTemplate('partner')">
+          <div class="tpl-icon">🤜</div>
+          <div class="tpl-name">Partner Pass</div>
+          <div class="tpl-desc">Reseller tier + margin</div>
+        </div>
+        <div class="tpl-btn" onclick="loadTemplate('referral')">
+          <div class="tpl-icon">🎯</div>
+          <div class="tpl-name">Referral Pass</div>
+          <div class="tpl-desc">Code + reward amount</div>
+        </div>
+        <div class="tpl-btn" onclick="loadTemplate('prospect')">
+          <div class="tpl-icon">📞</div>
+          <div class="tpl-name">Prospect Follow-up</div>
+          <div class="tpl-desc">Next step + AE contact</div>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:18px;">General</div>
+      <div class="template-grid">
+        <div class="tpl-btn" onclick="loadTemplate('loyalty')">
+          <div class="tpl-icon">☕</div>
+          <div class="tpl-name">Loyalty Card</div>
+          <div class="tpl-desc">Coffee rewards + balance</div>
+        </div>
+        <div class="tpl-btn" onclick="loadTemplate('ticket')">
+          <div class="tpl-icon">🎵</div>
+          <div class="tpl-name">Event Ticket</div>
+          <div class="tpl-desc">Concert with seat + gate</div>
+        </div>
+        <div class="tpl-btn" onclick="loadTemplate('coupon')">
+          <div class="tpl-icon">🏷️</div>
+          <div class="tpl-name">Coupon</div>
+          <div class="tpl-desc">Discount with code</div>
+        </div>
+        <div class="tpl-btn" onclick="loadTemplate('membership')">
+          <div class="tpl-icon">💪</div>
+          <div class="tpl-name">Membership</div>
+          <div class="tpl-desc">Gym / club access</div>
+        </div>
+        <div class="tpl-btn" onclick="loadTemplate('boarding')">
+          <div class="tpl-icon">✈️</div>
+          <div class="tpl-name">Boarding Pass</div>
+          <div class="tpl-desc">Flight with seat + gate</div>
+        </div>
+        <div class="tpl-btn" onclick="loadTemplate('order')">
+          <div class="tpl-icon">📦</div>
+          <div class="tpl-name">Order Pickup</div>
+          <div class="tpl-desc">Ready notification</div>
+        </div>
+        <div class="tpl-btn" onclick="loadTemplate('gift')">
+          <div class="tpl-icon">🎁</div>
+          <div class="tpl-name">Gift Card</div>
+          <div class="tpl-desc">Store credit</div>
+        </div>
+        <div class="tpl-btn" onclick="loadTemplate('access')">
+          <div class="tpl-icon">🔑</div>
+          <div class="tpl-name">Access Pass</div>
+          <div class="tpl-desc">VIP / event entry</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SETTINGS SCREEN ══ -->
+    <div id="screen-settings" class="screen">
+      <div class="card">
+        <div class="card-header"><span class="card-title">API key</span></div>
+        <div class="form-group">
+          <label>WalletWallet API key</label>
+          <div style="display:flex;gap:6px;">
+            <input type="password" id="apiKeyInput" placeholder="ww_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" oninput="saveApiKey()" style="font-family:var(--mono);font-size:11px;flex:1;" autocomplete="off" />
+            <button class="btn btn-xs" onclick="toggleKeyVis()">Show</button>
+          </div>
+          <div class="field-hint">Format: ww_live_ + 32 hex chars · <a href="https://www.walletwallet.dev/signup/" target="_blank" style="color:var(--accent-hi);">Get free key →</a></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-xs btn-accent" onclick="fetchUsage()">Test connection</button>
+          <button class="btn btn-xs btn-danger" onclick="clearApiKey()">Clear key</button>
+        </div>
+        <div id="keyTestMsg" style="margin-top:8px;"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">API settings</span></div>
+        <div class="form-group">
+          <label>Base URL</label>
+          <input type="url" id="baseURL" value="https://api.walletwallet.dev" />
+          <div class="field-hint">Change only if using a proxy or custom endpoint.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">About</span></div>
+        <div class="setting-row">
+          <div><div class="setting-label">PassForge</div><div class="setting-sub">WalletWallet white-label PWA</div></div>
+          <span class="badge badge-green">v1.0</span>
+        </div>
+        <div class="setting-row">
+          <div><div class="setting-label">Offline support</div><div class="setting-sub">Cached via service worker</div></div>
+          <span id="swStatus" class="badge badge-amber">Checking…</span>
+        </div>
+        <div class="setting-row" style="border-bottom:none;">
+          <div><div class="setting-label">WalletWallet docs</div><div class="setting-sub">walletwallet.dev/docs</div></div>
+          <a href="https://www.walletwallet.dev/docs/" target="_blank" class="btn btn-xs">Open →</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="nav-builder" onclick="showScreen('builder')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="5" width="20" height="14" rx="2"/>
+        <path d="M2 10h20"/>
+        <path d="M7 15h2M13 15h4"/>
+      </svg>
+      Builder
+    </button>
+    <button class="nav-item" id="nav-templates" onclick="showScreen('templates')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/>
+        <rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/>
+      </svg>
+      Templates
+    </button>
+    <button class="nav-item" id="nav-settings" onclick="showScreen('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+      </svg>
+      Settings
+    </button>
+  </nav>
+
+</div>
+
+<script>
+/* ─── State ─── */
+let selectedFormat = 'QR';
+let selectedPreset = 'dark';
+let fieldData = { header: [], primary: [], secondary: [], back: [] };
+let apiKey = '';
+let deferredInstallPrompt = null;
+
+const presetBg = {
+  dark: '#1a3a28', blue: '#1a2850', green: '#1a3a20',
+  red: '#3a1a1a', purple: '#2a1a40', orange: '#3a2010'
+};
+
+/* ─── Boot ─── */
+try { apiKey = localStorage.getItem('pf_api_key') || ''; } catch(e){}
+document.addEventListener('DOMContentLoaded', () => {
+  const inp = document.getElementById('apiKeyInput');
+  if (inp && apiKey) inp.value = apiKey;
+  updateKeyIndicator();
+  syncPreview();
+
+  // Check for ?tab= param
+  const p = new URLSearchParams(location.search).get('tab');
+  if (p) showScreen(p);
+
+  // SW status
+  if ('serviceWorker' in navigator) {
+    document.getElementById('swStatus').textContent = 'Active';
+    document.getElementById('swStatus').className = 'badge badge-green';
+  } else {
+    document.getElementById('swStatus').textContent = 'Unsupported';
+    document.getElementById('swStatus').className = 'badge badge-red';
+  }
+});
+
+/* ─── PWA install ─── */
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  document.getElementById('installBanner').classList.add('show');
+});
+document.getElementById('installBtn').addEventListener('click', async () => {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  const r = await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+  document.getElementById('installBanner').classList.remove('show');
+});
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBanner').classList.remove('show');
+});
+
+/* ─── Screen navigation ─── */
+function showScreen(name) {
+  const screen = document.getElementById('screen-' + name);
+  if (!screen) { showScreen('builder'); return; }
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  screen.classList.add('active');
+  const nav = document.getElementById('nav-' + name);
+  if (nav) nav.classList.add('active');
+  document.getElementById('appContent').scrollTo(0, 0);
+}
+
+/* ─── API key ─── */
+function saveApiKey() {
+  apiKey = document.getElementById('apiKeyInput').value.trim();
+  try { localStorage.setItem('pf_api_key', apiKey); } catch(e) {}
+  updateKeyIndicator();
+}
+function clearApiKey() {
+  apiKey = '';
+  document.getElementById('apiKeyInput').value = '';
+  try { localStorage.removeItem('pf_api_key'); } catch(e) {}
+  updateKeyIndicator();
+  addLog('API key cleared.', 'info');
+}
+function toggleKeyVis() {
+  const inp = document.getElementById('apiKeyInput');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+function updateKeyIndicator() {
+  const el = document.getElementById('keyIndicator');
+  const lbl = document.getElementById('keyIndicatorLabel');
+  if (apiKey && apiKey.startsWith('ww_live_') && apiKey.length >= 40) {
+    el.className = 'key-indicator ok';
+    lbl.textContent = 'Key set';
+  } else if (apiKey) {
+    el.className = 'key-indicator err';
+    lbl.textContent = 'Invalid';
+  } else {
+    el.className = 'key-indicator';
+    lbl.textContent = 'No key';
+  }
+}
+
+/* ─── Format ─── */
+function pickFormat(fmt, el) {
+  selectedFormat = fmt;
+  document.querySelectorAll('.fmt-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  syncPreview();
+}
+
+/* ─── Preset ─── */
+function pickPreset(preset, el) {
+  selectedPreset = preset;
+  document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('customColor').value = '';
+  syncPreview();
+}
+
+/* ─── Expiry ─── */
+function handleExpiry() {
+  const v = document.getElementById('expirySelect').value;
+  document.getElementById('customExpRow').style.display = v === 'custom' ? 'block' : 'none';
+  syncPreview();
+}
+function getExpDays() {
+  const v = document.getElementById('expirySelect').value;
+  if (!v) return null;
+  if (v === 'custom') return parseInt(document.getElementById('customExpDays').value) || null;
+  return parseInt(v);
+}
+
+/* ─── Fields ─── */
+function addField(type) {
+  fieldData[type].push({ id: Date.now() + Math.random(), label: '', value: '' });
+  renderFieldType(type);
+}
+function removeField(type, id) {
+  fieldData[type] = fieldData[type].filter(f => f.id != id);
+  renderFieldType(type);
+  syncPreview();
+}
+function renderFieldType(type) {
+  const container = document.getElementById(type + 'Fields');
+  container.innerHTML = fieldData[type].map(f => `
+    <div class="field-row">
+      <input type="text" placeholder="Label" value="${esc(f.label)}" oninput="setField('${type}',${f.id},'label',this.value)" />
+      <span class="sep">·</span>
+      <input type="text" placeholder="Value" value="${esc(f.value)}" oninput="setField('${type}',${f.id},'value',this.value)" />
+      <button class="remove-btn" onclick="removeField('${type}',${f.id})">×</button>
+    </div>`).join('');
+}
+function setField(type, id, key, val) {
+  const f = fieldData[type].find(x => x.id == id);
+  if (f) f[key] = val;
+  syncPreview();
+}
+function esc(s) {
+  return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ─── Preview ─── */
+function syncPreview() {
+  const cc = document.getElementById('customColor').value.trim();
+  const bg = (cc && /^#[0-9a-fA-F]{6}$/.test(cc)) ? cc : (presetBg[selectedPreset] || '#1a3a28');
+  document.getElementById('passCard').style.background = bg;
+
+  document.getElementById('pvLogoText').textContent = document.getElementById('logoText').value || 'My Brand';
+
+  const h = fieldData.header;
+  const ha = document.getElementById('pvHeaderArea');
+  if (h.length) {
+    ha.style.display = '';
+    document.getElementById('pvHeaderLabel').textContent = h[0].label || 'HEADER';
+    document.getElementById('pvHeaderValue').textContent = h[0].value || '—';
+  } else ha.style.display = 'none';
+
+  const p = fieldData.primary;
+  const pa = document.getElementById('pvPrimaryArea');
+  if (p.length) {
+    pa.style.display = '';
+    document.getElementById('pvPrimaryLabel').textContent = p[0].label || 'PRIMARY';
+    document.getElementById('pvPrimaryValue').textContent = p[0].value || '—';
+  } else pa.style.display = 'none';
+
+  const s = fieldData.secondary;
+  const sa = document.getElementById('pvSecRow');
+  if (s.length) {
+    sa.style.display = '';
+    document.getElementById('pvSecLabel').textContent = s[0].label || 'SEC';
+    document.getElementById('pvSecValue').textContent = s[0].value || '—';
+  } else sa.style.display = 'none';
+
+  const exp = getExpDays();
+  const exEl = document.getElementById('pvExpiry');
+  if (exp) {
+    const d = new Date(); d.setDate(d.getDate() + exp);
+    exEl.textContent = 'EXPIRES ' + d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
+  } else exEl.textContent = '';
+
+  drawBarcode(selectedFormat);
+  updateBackPreview();
+}
+
+function updateBackPreview() {
+  const bp = document.getElementById('backPreview');
+  if (!fieldData.back.length) { bp.style.display = 'none'; return; }
+  bp.style.display = '';
+  bp.innerHTML = '<div style="font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-2);margin-bottom:8px;">Back of pass</div>' +
+    fieldData.back.map(f => `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:11px;"><span style="color:var(--text-2)">${f.label||''}</span><span style="color:var(--text-0);font-weight:500;">${f.value||''}</span></div>`).join('');
+}
+
+/* ─── Barcode drawing ─── */
+function drawBarcode(fmt) {
+  const svg = document.getElementById('barcodePreview');
+  svg.innerHTML = '';
+  const ns = 'http://www.w3.org/2000/svg';
+  const mk = (tag,attrs) => {
+    const el = document.createElementNS(ns,tag);
+    Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,v));
+    return el;
+  };
+  if (fmt === 'QR') {
+    svg.setAttribute('viewBox','0 0 7 7');
+    svg.setAttribute('width','56'); svg.setAttribute('height','56');
+    [[1,1,1,1,1,1,1],[1,0,0,0,0,0,1],[1,0,1,1,1,0,1],[1,0,1,0,1,0,1],[1,0,1,1,1,0,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1]]
+    .forEach((row,r)=>row.forEach((c,col)=>{ if(c) svg.appendChild(mk('rect',{x:col,y:r,width:1,height:1,fill:'#111'})); }));
+    // center dots
+    [[3,3],[4,3],[3,4],[4,4]].forEach(([x,y])=>svg.appendChild(mk('rect',{x,y,width:1,height:1,fill:'#111'})));
+  } else if (fmt === 'Code128') {
+    svg.setAttribute('viewBox','0 0 60 18'); svg.setAttribute('width','56'); svg.setAttribute('height','21');
+    [2,1,3,1,2,2,1,4,1,2,3,1,2,1,4,1,1,2,3,1,2,1,3,2,1,1,2,1].reduce((x,w,i)=>{
+      if(i%2===0) svg.appendChild(mk('rect',{x,y:0,width:w,height:18,fill:'#111'}));
+      return x+w;
+    },1);
+  } else if (fmt === 'PDF417') {
+    svg.setAttribute('viewBox','0 0 60 30'); svg.setAttribute('width','56'); svg.setAttribute('height','28');
+    for(let r=0;r<4;r++){
+      [2,3,1,4,2,5,1,2,3,1,4,2,1,3,2,4,1,2,3,1].reduce((x,w,i)=>{
+        if(i%2===0) svg.appendChild(mk('rect',{x,y:r*7,width:w,height:5,fill:'#111'}));
+        return x+w;
+      },1);
+    }
+  } else { // Aztec
+    svg.setAttribute('viewBox','0 0 7 7'); svg.setAttribute('width','56'); svg.setAttribute('height','56');
+    [[1,2],[1,3],[1,4],[2,1],[3,1],[4,1],[5,2],[5,3],[5,4],[2,5],[3,5],[4,5],[3,3]].forEach(([x,y])=>
+      svg.appendChild(mk('rect',{x,y,width:1,height:1,fill:'#111'})));
+    svg.appendChild(mk('rect',{x:2,y:2,width:3,height:3,rx:0.3,fill:'none',stroke:'#111','stroke-width':0.5}));
+  }
+}
+
+/* ─── Generate pass ─── */
+async function generatePass() {
+  const key = document.getElementById('apiKeyInput').value.trim() || apiKey;
+  if (!key || !key.startsWith('ww_live_')) {
+    addLog('Set a valid API key in Settings first.', 'err'); return;
+  }
+  const bv = document.getElementById('barcodeValue').value.trim();
+  if (!bv) { addLog('Barcode value is required.', 'err'); return; }
+
+  const btn = document.getElementById('generateBtn');
+  const lbl = document.getElementById('generateLabel');
+  btn.disabled = true;
+  lbl.innerHTML = '<div class="spinner"></div> Generating…';
+
+  const body = { barcodeValue: bv, barcodeFormat: selectedFormat };
+  const lt = document.getElementById('logoText').value.trim();
+  if (lt) body.logoText = lt;
+  const desc = document.getElementById('description').value.trim();
+  if (desc) body.description = desc;
+  if (fieldData.primary.length) body.primaryFields = fieldData.primary.map(f=>({label:f.label,value:f.value}));
+  if (fieldData.secondary.length) body.secondaryFields = fieldData.secondary.map(f=>({label:f.label,value:f.value}));
+  if (fieldData.header.length) body.headerFields = fieldData.header.map(f=>({label:f.label,value:f.value}));
+  if (fieldData.back.length) body.backFields = fieldData.back.map(f=>({label:f.label,value:f.value}));
+  const cc = document.getElementById('customColor').value.trim();
+  if (cc) body.color = cc; else body.colorPreset = selectedPreset;
+  const exp = getExpDays();
+  if (exp) body.expirationDays = exp;
+  const lu = document.getElementById('logoURL').value.trim(); if (lu) body.logoURL = lu;
+  const tu = document.getElementById('thumbnailURL').value.trim(); if (tu) body.thumbnailURL = tu;
+  const su = document.getElementById('stripURL').value.trim(); if (su) body.stripURL = su;
+  const base = document.getElementById('baseURL').value.trim() || 'https://api.walletwallet.dev';
+
+  try {
+    const resp = await fetch(base + '/api/pkpass', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+      body: JSON.stringify(body)
+    });
+    if (resp.ok) {
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = (lt || 'pass').toLowerCase().replace(/\s+/g,'-') + '.pkpass';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      addLog('Pass generated and downloaded successfully.', 'ok');
+    } else {
+      const err = await resp.json().catch(()=>({error:'Unknown error'}));
+      if (resp.status === 429) addLog(`Rate limit exceeded. Resets ${err.resetDate||'soon'}.`, 'err');
+      else addLog(`Error ${resp.status}: ${err.error || 'Request failed'}`, 'err');
+    }
+  } catch(e) { addLog('Network error: ' + e.message, 'err'); }
+  btn.disabled = false; lbl.textContent = 'Generate .pkpass';
+}
+
+/* ─── API test (usage endpoint) ─── */
+async function fetchUsage() {
+  const key = document.getElementById('apiKeyInput').value.trim() || apiKey;
+  const base = document.getElementById('baseURL').value.trim() || 'https://api.walletwallet.dev';
+  const msg = document.getElementById('keyTestMsg');
+  if (!key || !key.startsWith('ww_live_')) {
+    if (msg) msg.innerHTML = '<div class="log-item err">Set a valid API key first.</div>';
+    return;
+  }
+  try {
+    const resp = await fetch(base + '/api/auth/usage', { headers: { 'Authorization': 'Bearer ' + key } });
+    const data = await resp.json();
+    if (resp.ok) {
+      const plan = data.plan.charAt(0).toUpperCase() + data.plan.slice(1);
+      const used = data.count.toLocaleString();
+      const rem = data.remaining.toLocaleString();
+      if (msg) {
+        msg.innerHTML = '<div class="log-item ok">Connection successful. ' + plan + ' plan — ' + used + ' / ' + data.limit.toLocaleString() + ' used; ' + rem + ' left (resets ' + data.resetDate + ').</div>';
+      }
+    } else {
+      if (msg) msg.innerHTML = '<div class="log-item err">Error ' + resp.status + ': ' + (data.error || '') + '</div>';
+    }
+  } catch (e) {
+    if (msg) msg.innerHTML = '<div class="log-item err">Network error: ' + e.message + '</div>';
+  }
+}
+
+/* ─── Logs ─── */
+function addLog(msg, type) {
+  const list = document.getElementById('logList');
+  const div = document.createElement('div');
+  div.className = 'log-item ' + type;
+  const ts = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  div.textContent = `[${ts}] ${msg}`;
+  list.insertBefore(div, list.firstChild);
+  while (list.children.length > 6) list.removeChild(list.lastChild);
+}
+
+/* ─── Templates ─── */
+const TEMPLATES = {
+
+  /* ── Networking ── */
+  biz_card: { logoText:'Your Company', barcodeValue:'https://linkedin.com/in/yourname', preset:'dark', exp:365,
+    header:[{label:'ROLE',value:'VP Sales'}], primary:[{label:'NAME',value:'Your Name'}],
+    secondary:[{label:'COMPANY',value:'Acme Corp'},{label:'PHONE',value:'+91 98765 43210'}],
+    back:[{label:'Email',value:'you@acme.com'},{label:'LinkedIn',value:'linkedin.com/in/yourname'},{label:'Website',value:'acme.com'}] },
+
+  founder: { logoText:'Your Startup', barcodeValue:'https://yourstartup.com/deck', preset:'purple', exp:365,
+    header:[{label:'STAGE',value:'Seed'}], primary:[{label:'FOUNDER',value:'Your Name'}],
+    secondary:[{label:'COMPANY',value:'StartupName'},{label:'FOCUS',value:'AI / SaaS'}],
+    back:[{label:'Pitch deck',value:'yourstartup.com/deck'},{label:'Calendly',value:'cal.com/yourname'},{label:'Tagline',value:'One line about what you do'}] },
+
+  freelancer: { logoText:'Your Studio', barcodeValue:'https://yourportfolio.com', preset:'green', exp:90,
+    header:[{label:'RATE',value:'₹8k/day'}], primary:[{label:'NAME',value:'Your Name'}],
+    secondary:[{label:'SKILL',value:'Brand Design'},{label:'AVAIL',value:'From June'}],
+    back:[{label:'Portfolio',value:'yourportfolio.com'},{label:'Email',value:'hello@studio.com'},{label:'Behance',value:'behance.net/you'}] },
+
+  speaker: { logoText:'Your Name', barcodeValue:'https://yoursite.com/speak', preset:'dark', exp:365,
+    header:[{label:'TOPIC',value:'Future of Work'}], primary:[{label:'SPEAKER',value:'Your Name'}],
+    secondary:[{label:'TALKS',value:'40+ globally'},{label:'NEWSLETTER',value:'42k readers'}],
+    back:[{label:'Book me',value:'yoursite.com/speak'},{label:'Substack',value:'yourname.substack.com'},{label:'Bio',value:'Keynote speaker on leadership and the future of work.'}] },
+
+  job_seeker: { logoText:'Your Name', barcodeValue:'https://yourname.dev/resume', preset:'blue', exp:90,
+    header:[{label:'OPEN TO',value:'Product roles'}], primary:[{label:'NAME',value:'Your Name'}],
+    secondary:[{label:'EXP',value:'6 yrs · B2B SaaS'},{label:'LOCATION',value:'Remote / Hyderabad'}],
+    back:[{label:'Resume',value:'yourname.dev/resume'},{label:'GitHub',value:'github.com/yourname'},{label:'LinkedIn',value:'linkedin.com/in/yourname'}] },
+
+  conf_badge: { logoText:'PyCon 2026', barcodeValue:'CONF-BADGE-001', preset:'purple', exp:30,
+    header:[{label:'TRACK',value:'AI / ML'}], primary:[{label:'NAME',value:'Your Name'}],
+    secondary:[{label:'COMPANY',value:'Acme Corp'},{label:'TIER',value:'Speaker'}],
+    back:[{label:'Schedule',value:'pycon2026.com/schedule'},{label:'Slack',value:'#pycon-networking'},{label:'Contact',value:'you@acme.com'}] },
+
+  /* ── Sales ── */
+  sales_intro: { logoText:'Your Company', barcodeValue:'https://yourco.com/demo', preset:'blue', exp:90,
+    header:[{label:'TERRITORY',value:'APAC'}], primary:[{label:'AE',value:'Your Name'}],
+    secondary:[{label:'COMPANY',value:'Your Co'},{label:'SEGMENT',value:'Enterprise'}],
+    back:[{label:'Book a demo',value:'yourco.com/demo'},{label:'Phone',value:'+91 98765 43210'},{label:'Email',value:'you@yourco.com'},{label:'Case study',value:'yourco.com/cases'}] },
+
+  demo_invite: { logoText:'YourCo Demo', barcodeValue:'https://yourco.com/demo/session', preset:'purple', exp:30,
+    header:[{label:'SLOT',value:'May 5, 2:00 PM'}], primary:[{label:'DEMO',value:'Product Tour'}],
+    secondary:[{label:'HOST',value:'Sales Team'},{label:'DURATION',value:'30 min'}],
+    back:[{label:'Join link',value:'yourco.com/demo/session'},{label:'Prep guide',value:'yourco.com/prep'},{label:'Contact',value:'sales@yourco.com'}] },
+
+  proposal: { logoText:'Your Company', barcodeValue:'https://yourco.com/proposal/xyz', preset:'dark', exp:30,
+    header:[{label:'VALUE',value:'$48,000'}], primary:[{label:'PROPOSAL',value:'Enterprise Plan'}],
+    secondary:[{label:'VALID UNTIL',value:'May 31'},{label:'TIER',value:'Enterprise'}],
+    back:[{label:'View proposal',value:'yourco.com/proposal/xyz'},{label:'AE',value:'Your Name'},{label:'Phone',value:'+91 98765 43210'},{label:'Book a call',value:'cal.com/yourname'}] },
+
+  partner: { logoText:'Partner Program', barcodeValue:'https://yourco.com/partners', preset:'green', exp:365,
+    header:[{label:'TIER',value:'Gold Partner'}], primary:[{label:'PARTNER',value:'Company Name'}],
+    secondary:[{label:'MARGIN',value:'25%'},{label:'REGION',value:'APAC'}],
+    back:[{label:'Partner portal',value:'yourco.com/partners'},{label:'Support',value:'partners@yourco.com'},{label:'Co-sell contact',value:'+91 98765 43210'}] },
+
+  referral: { logoText:'Your Company', barcodeValue:'REF-YOURCODE', preset:'orange', exp:90,
+    header:[{label:'REWARD',value:'$500 credit'}], primary:[{label:'REFERRAL',value:'Your Name'}],
+    secondary:[{label:'CODE',value:'REF-YOURCODE'},{label:'EXPIRES',value:'Jul 2026'}],
+    back:[{label:'How it works',value:'Share your code. Earn $500 per closed deal.'},{label:'T&Cs',value:'yourco.com/referral/terms'}] },
+
+  prospect: { logoText:'Your Company', barcodeValue:'https://yourco.com/next-steps', preset:'blue', exp:30,
+    header:[{label:'NEXT STEP',value:'Discovery call'}], primary:[{label:'FOR',value:'Prospect Name'}],
+    secondary:[{label:'AE',value:'Your Name'},{label:'DATE',value:'May 10, 11 AM'}],
+    back:[{label:'Join link',value:'yourco.com/next-steps'},{label:'AE phone',value:'+91 98765 43210'},{label:'One-pager',value:'yourco.com/overview'}] },
+
+  /* ── General ── */
+  loyalty: { logoText:'Bayroast Coffee', barcodeValue:'LOYALTY-98765', preset:'green', exp:365,
+    header:[{label:'BALANCE',value:'$25.00'}], primary:[{label:'CARD',value:'Coffee Rewards'}],
+    secondary:[{label:'TIER',value:'Gold Status'},{label:'VISITS',value:'47'}],
+    back:[{label:'Terms',value:'Valid at all locations. Non-transferable.'}] },
+  ticket: { logoText:'Summer Fest 2026', barcodeValue:'TICKET-A23', preset:'purple', exp:1,
+    header:[{label:'GATE',value:'B'}], primary:[{label:'EVENT',value:'Concert Night'}],
+    secondary:[{label:'SEAT',value:'A-23'},{label:'DATE',value:'Jun 21'}],
+    back:[{label:'Venue',value:'Central Arena'},{label:'Time',value:'8:00 PM'}] },
+  coupon: { logoText:'Flash Sale', barcodeValue:'COUPON-50OFF', preset:'red', exp:30,
+    header:[{label:'CODE',value:'SAVE50'}], primary:[{label:'OFFER',value:'50% Off'}],
+    secondary:[{label:'MIN ORDER',value:'$30'},{label:'CATEGORY',value:'All items'}],
+    back:[{label:'Terms',value:'One use per customer. Cannot combine offers.'}] },
+  membership: { logoText:'PowerHouse Gym', barcodeValue:'MEMBER-001', preset:'dark', exp:365,
+    header:[], primary:[{label:'MEMBER',value:'Premium'}],
+    secondary:[{label:'NAME',value:'Your Name'},{label:'VALID',value:'Dec 2026'}],
+    back:[{label:'Emergency',value:'555-0100'},{label:'Location',value:'42 Fitness Blvd'}] },
+  boarding: { logoText:'SkyAir', barcodeValue:'BOARD-AA1234', preset:'blue', exp:1,
+    header:[{label:'SEAT',value:'12A'}], primary:[{label:'FLIGHT',value:'AA 1234'}],
+    secondary:[{label:'FROM',value:'HYD'},{label:'TO',value:'BOM'}],
+    back:[{label:'Gate',value:'B22'},{label:'Boarding',value:'10:30 AM'},{label:'Class',value:'Economy'}] },
+  order: { logoText:'QuickBite', barcodeValue:'ORDER-456', preset:'orange', exp:1,
+    header:[{label:'ETA',value:'5 min'}], primary:[{label:'ORDER',value:'Ready!'}],
+    secondary:[{label:'ORDER #',value:'#456'},{label:'ITEMS',value:'3'}],
+    back:[{label:'Counter',value:'3 — Main St branch'}] },
+  gift: { logoText:'StyleStore', barcodeValue:'GIFT-XK99', preset:'dark', exp:365,
+    header:[{label:'BALANCE',value:'$50.00'}], primary:[{label:'GIFT CARD',value:'Store Credit'}],
+    secondary:[{label:'VALID',value:'2027'},{label:'ID',value:'XK99'}],
+    back:[{label:'How to use',value:'Present at checkout. Non-refundable.'}] },
+  access: { logoText:'VIP Access', barcodeValue:'VIP-001', preset:'purple', exp:90,
+    header:[{label:'LEVEL',value:'VIP'}], primary:[{label:'ACCESS',value:'All Areas'}],
+    secondary:[{label:'NAME',value:'Guest'},{label:'ISSUED',value:'Apr 2026'}],
+    back:[{label:'Support',value:'vip@event.com'}] },
+};
+
+function loadTemplate(key) {
+  const t = TEMPLATES[key]; if (!t) return;
+  document.getElementById('logoText').value = t.logoText;
+  document.getElementById('barcodeValue').value = t.barcodeValue;
+  document.getElementById('customColor').value = '';
+  const expMap = { 365:'365', 90:'90', 30:'30', 1:'30' };
+  document.getElementById('expirySelect').value = expMap[t.exp] || '30';
+
+  let id = Date.now();
+  ['header','primary','secondary','back'].forEach(type => {
+    fieldData[type] = (t[type]||[]).map(f => ({ id: id++, label: f.label, value: f.value }));
+    renderFieldType(type);
+  });
+
+  document.querySelectorAll('.swatch').forEach(s => {
+    s.classList.toggle('active', s.dataset.preset === t.preset);
+  });
+  selectedPreset = t.preset;
+
+  syncPreview();
+  showScreen('builder');
+}
+
+/* ─── Service Worker registration ─── */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
+/* ─── Init ─── */
+syncPreview();
+</script>
+</body>
+</html>
