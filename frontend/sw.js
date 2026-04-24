@@ -1,10 +1,18 @@
-const CACHE = 'passforge-v1';
+const CACHE = 'passforge-v2';
 const ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
   'https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap'
 ];
+
+function isApiPath(pathname) {
+  return (
+    pathname.startsWith('/api/') ||
+    pathname.startsWith('/v1/') ||
+    pathname === '/healthz'
+  );
+}
 
 self.addEventListener('install', e => {
   e.waitUntil(
@@ -24,6 +32,11 @@ self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
   if (url.origin !== self.location.origin) {
+    e.respondWith(fetch(e.request));
+    return;
+  }
+
+  if (isApiPath(url.pathname)) {
     e.respondWith(fetch(e.request));
     return;
   }
