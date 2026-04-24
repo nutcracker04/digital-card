@@ -1,10 +1,8 @@
-"""FastAPI tap resolver: WalletWallet Apple Wallet (.pkpass) issuance."""
 
 from __future__ import annotations
 
 import json
 import logging
-import os
 import uuid
 from pathlib import Path
 
@@ -20,23 +18,17 @@ from app.device import classify_user_agent
 from app.deps import walletwallet_api_key
 from app.registry import load_walletwallet_body, normalize_slug
 from app.routers.passes import router as passes_router
+from app.routers.pwa import router as pwa_router
 from app.routers.settings import read_active_pass_id
 from app.routers.settings import router as settings_router
 from app.walletwallet_client import fetch_pkpass_or_raise
 
 
 def _find_project_root() -> Path:
-    """
-    Repository root: ``frontend/`` + ``app/`` live there. When the package is
-    installed to site-packages (``pip install .`` on Render), ``__file__`` is
-    not under the repo — use the process working directory, which is the
-    project root in typical deploys.
-    """
     here = Path(__file__).resolve()
     cwd = Path.cwd()
     if (cwd / "frontend" / "index.html").is_file():
         return cwd
-    # Editable / source checkout: app/main.py → parent is app, grandparent is repo
     for base in (here.parent.parent, cwd.parent):
         if (base / "frontend" / "index.html").is_file() and (base / "app" / "main.py").is_file():
             return base
@@ -53,18 +45,12 @@ logger = logging.getLogger("wallet.tap")
 app = FastAPI(title="NFC Wallet Orchestrator", version="0.4.0")
 app.include_router(passes_router)
 app.include_router(settings_router)
+app.include_router(pwa_router)
 
-# CORS (PWA on a different static host, e.g. Netlify, calls Render API)
-_cors_raw = os.getenv("CORS_ORIGINS", "*").strip()
-if _cors_raw == "*":
-    _cors_list = ["*"]
-else:
-    _cors_list = [o.strip() for o in _cors_raw.split(",") if o.strip()] or ["*"]
-_cors_wild = len(_cors_list) == 1 and _cors_list[0] == "*"
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_cors_list,
-    allow_credentials=not _cors_wild,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["x-request-id"],
@@ -193,10 +179,6 @@ def _resolve_tap(user_id: str, request: Request) -> Response | JSONResponse:
 
 @app.get("/v1/tap/current", response_model=None)
 def tap_current(request: Request) -> Response | JSONResponse:
-    """
-    Stable NFC URL: serves whatever pass is marked active in settings (in-process, no redirect
-    to avoid Wallet/Safari issues with 302+pkpass).
-    """
     col = passes_collection()
     if col is None:
         raise HTTPException(
@@ -214,7 +196,6 @@ def tap_current(request: Request) -> Response | JSONResponse:
 
 @app.get("/v1/card/current", response_model=None)
 def card_current(request: Request) -> Response | JSONResponse:
-    """Same as /v1/tap/current (alternate path for NFC)."""
     return tap_current(request)
 
 
@@ -225,7 +206,6 @@ def tap_card(user_id: str, request: Request):
 
 @app.get("/v1/card/{user_id}")
 def tap_card_alias(user_id: str, request: Request):
-    """Optional alias matching alternate NFC URLs."""
     return _resolve_tap(user_id, request)
 
 
@@ -234,7 +214,6 @@ def healthz():
     return {"status": "ok"}
 
 
-# PWA (when ``frontend/`` is present) — must be last: catches ``/``, ``/manifest.json``, ``/sw.js``, etc.
 FRONTEND_DIR = PROJECT_ROOT / "frontend"
 if (FRONTEND_DIR / "index.html").is_file():
     app.mount(

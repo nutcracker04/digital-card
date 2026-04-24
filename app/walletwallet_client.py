@@ -1,4 +1,3 @@
-"""WalletWallet HTTP API client (POST /api/pkpass)."""
 
 from __future__ import annotations
 
@@ -15,10 +14,6 @@ PKPASS_PATH = "/api/pkpass"
 
 
 def fetch_pkpass_or_raise(api_key: str, body: dict[str, object]) -> bytes:
-    """
-    POST JSON to WalletWallet; returns raw .pkpass bytes on success.
-    api_key: full token including ww_live_ prefix (Bearer value).
-    """
     url = f"{WW_BASE.rstrip('/')}{PKPASS_PATH}"
     headers = {
         "Authorization": f"Bearer {api_key.strip()}",

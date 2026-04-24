@@ -1,4 +1,3 @@
-"""Single-tenant app settings: active pass for stable NFC /v1/tap/current."""
 
 from __future__ import annotations
 
@@ -43,10 +42,6 @@ class ActivePassUpdate(BaseModel):
 
 
 def read_active_pass_id() -> str | None:
-    """
-    Read the active pass ObjectId as a 24-hex string, or None if not set.
-    If ``settings_collection()`` is None, return None (caller should 503 for tap).
-    """
     c = settings_collection()
     if c is None:
         return None

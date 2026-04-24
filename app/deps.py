@@ -1,4 +1,3 @@
-"""Shared FastAPI dependencies and env-based secrets."""
 
 from __future__ import annotations
 

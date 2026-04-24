@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <style>
-/* ─── Reset & Base ─── */
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { height: 100%; font-size: 16px; }
 body {
@@ -29,7 +29,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ─── CSS Variables ─── */
+
 :root {
   --bg-0: #080d0b;
   --bg-1: #0f1712;
@@ -57,16 +57,17 @@ body {
   --mono: 'DM Mono', monospace;
   --shadow: 0 4px 28px rgba(0,0,0,0.55);
   --pass-radius: 20px;
-  /* Fixed shell width — never changes */
+  
+
   --shell-w: 440px;
 }
 
-/* ─── Scrollbar ─── */
+
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 2px; }
 
-/* ─── Layout — FIXED width shell, no shifts ─── */
+
 body {
   display: flex;
   justify-content: center;
@@ -83,7 +84,7 @@ body {
   position: relative;
 }
 
-/* On desktop — card style */
+
 @media (min-width: 680px) {
   body { align-items: center; background: #050907; }
   .app-shell {
@@ -99,11 +100,11 @@ body {
   .bottom-nav { border-radius: 0 0 26px 26px !important; }
 }
 
-/* ─── Header ─── */
+
 .app-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 14px 18px 12px;
   padding-top: calc(14px + env(safe-area-inset-top));
   border-bottom: 0.5px solid var(--border);
@@ -132,28 +133,8 @@ body {
   box-shadow: 0 2px 8px rgba(24,121,92,0.35);
 }
 .brand-icon svg { width: 15px; height: 15px; }
-.header-right { display: flex; align-items: center; gap: 7px; }
 
-/* Key pill */
-.key-pill {
-  display: flex; align-items: center; gap: 5px;
-  font-size: 11px; color: var(--text-2);
-  background: var(--bg-2);
-  border: 0.5px solid var(--border-hi);
-  border-radius: 20px;
-  padding: 4px 10px 4px 8px;
-  cursor: pointer;
-  transition: all 0.15s;
-  -webkit-tap-highlight-color: transparent;
-}
-.key-pill:hover { border-color: var(--border-accent); color: var(--text-1); }
-.key-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-2); flex-shrink: 0; }
-.key-pill.ok .dot { background: var(--green-text); box-shadow: 0 0 4px var(--green-text); }
-.key-pill.ok { color: var(--green-text); border-color: rgba(78,200,130,0.25); }
-.key-pill.err .dot { background: var(--red); }
-.key-pill.err { color: var(--red); }
 
-/* ─── Bottom nav — 3 tabs ─── */
 .bottom-nav {
   display: flex;
   border-top: 0.5px solid var(--border);
@@ -179,7 +160,7 @@ body {
 .nav-item.active { color: var(--accent-hi); }
 .nav-item:active { transform: scale(0.91); }
 
-/* Active indicator dot */
+
 .nav-item.active::after {
   content: '';
   display: block;
@@ -190,29 +171,30 @@ body {
   margin-top: -1px;
 }
 
-/* ─── Content — fixed, no width jump ─── */
+
 .app-content {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 18px 18px 24px;
   -webkit-overflow-scrolling: touch;
-  /* This width is always the same */
+  
+
   width: 100%;
 }
 
-/* ─── Screens ─── */
+
 .screen { display: none; width: 100%; }
 .screen.active { display: block; }
 
-/* ─── Section headers ─── */
+
 .section-label {
   font-size: 10px; font-weight: 600; letter-spacing: 0.11em;
   text-transform: uppercase; color: var(--text-2);
   margin: 0 0 10px;
 }
 
-/* ─── Cards ─── */
+
 .card {
   background: var(--bg-1);
   border: 0.5px solid var(--border);
@@ -226,7 +208,7 @@ body {
 }
 .card-title { font-size: 13px; font-weight: 500; color: var(--text-0); }
 
-/* ─── Form elements ─── */
+
 .form-group { margin-bottom: 11px; }
 .form-group:last-child { margin-bottom: 0; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
@@ -268,7 +250,7 @@ select {
 textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
 .field-hint { font-size: 10px; color: var(--text-2); margin-top: 4px; }
 
-/* ─── Buttons ─── */
+
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   padding: 9px 14px;
@@ -295,7 +277,7 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
 .btn-ghost { background: transparent; border-color: transparent; color: var(--text-2); }
 .btn-ghost:hover { background: var(--bg-2); border-color: var(--border-hi); color: var(--text-0); }
 
-/* ─── Badges ─── */
+
 .badge {
   display: inline-flex; align-items: center; padding: 2px 8px;
   border-radius: 20px; font-size: 10px; font-weight: 600; letter-spacing: 0.03em;
@@ -306,7 +288,7 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
 .badge-amber { background: var(--amber-bg); color: var(--amber); }
 .badge-dim { background: var(--bg-3); color: var(--text-2); }
 
-/* ─── Pass Preview ─── */
+
 .pass-wrap {
   perspective: 900px;
   margin-bottom: 14px;
@@ -351,7 +333,7 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
 }
 .pass-barcode-wrap svg { display: block; }
 
-/* ─── Field rows ─── */
+
 .field-row {
   display: flex; align-items: center; gap: 5px;
   margin-bottom: 6px;
@@ -368,7 +350,7 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
 }
 .remove-btn:hover { background: var(--red-bg); color: var(--red); border-color: rgba(224,82,82,0.3); }
 
-/* ─── Format selector ─── */
+
 .format-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 .fmt-btn {
   border: 0.5px solid var(--border-hi);
@@ -385,7 +367,7 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
 .fmt-desc { font-size: 9px; color: var(--text-2); margin-top: 1px; }
 .fmt-btn.active .fmt-name { color: var(--accent-hi); }
 
-/* ─── Color swatches ─── */
+
 .swatch-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .swatch {
   width: 28px; height: 28px; border-radius: 50%;
@@ -397,7 +379,7 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
 .swatch:active { transform: scale(0.9); }
 .swatch.active { border-color: rgba(255,255,255,0.75); transform: scale(1.13); box-shadow: 0 0 0 2px rgba(0,0,0,0.4); }
 
-/* ─── Logs ─── */
+
 .log-list { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
 .log-item {
   padding: 8px 11px; border-radius: var(--radius-xs);
@@ -408,7 +390,7 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
 .log-item.err { background: var(--red-bg); color: var(--red); }
 .log-item.info { background: var(--bg-3); color: var(--text-1); }
 
-/* ─── Templates ─── */
+
 .template-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
 .tpl-btn {
   background: var(--bg-2); border: 0.5px solid var(--border);
@@ -422,14 +404,14 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
 .tpl-name { font-size: 12px; font-weight: 500; color: var(--text-0); }
 .tpl-desc { font-size: 10px; color: var(--text-2); margin-top: 2px; }
 
-/* ─── Divider ─── */
+
 .divider { border: none; border-top: 0.5px solid var(--border); margin: 12px 0; }
 
-/* ─── Spinner ─── */
+
 @keyframes spin { to { transform: rotate(360deg); } }
 .spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.25); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
 
-/* ─── Install banner ─── */
+
 #installBanner {
   display: none;
   margin: 0 0 12px;
@@ -444,44 +426,7 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
 #installBanner .install-text { flex: 1; font-size: 12px; color: var(--text-1); }
 #installBanner .install-title { font-size: 13px; font-weight: 500; color: var(--text-0); margin-bottom: 2px; }
 
-/* ─── API Key modal ─── */
-.modal-overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.65);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 200;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.2s;
-}
-.modal-overlay.open { opacity: 1; pointer-events: all; }
-.modal-sheet {
-  background: var(--bg-1);
-  border: 0.5px solid var(--border-hi);
-  border-radius: 20px 20px 0 0;
-  padding: 20px 18px 32px;
-  width: 100%;
-  max-width: var(--shell-w);
-  transform: translateY(100%);
-  transition: transform 0.25s cubic-bezier(0.32,0.72,0,1);
-  padding-bottom: calc(32px + env(safe-area-inset-bottom));
-}
-.modal-overlay.open .modal-sheet { transform: translateY(0); }
-.modal-handle {
-  width: 36px; height: 4px;
-  background: var(--bg-3);
-  border-radius: 2px;
-  margin: 0 auto 18px;
-}
-.modal-title {
-  font-size: 15px; font-weight: 600; color: var(--text-0);
-  margin-bottom: 14px;
-}
 
-/* ─── Passes page ─── */
 .passes-empty {
   text-align: center;
   padding: 60px 20px 40px;
@@ -518,7 +463,7 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
   padding: 10px 12px; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.92);
 }
 
-/* Saved pass card */
+
 .saved-pass-list { display: flex; flex-direction: column; gap: 9px; }
 .saved-pass-card {
   background: var(--bg-1);
@@ -579,7 +524,7 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
 }
 .saved-pass-actions { display: flex; gap: 5px; }
 
-/* Passes count badge in nav */
+
 .nav-count {
   display: none;
   position: absolute;
@@ -597,28 +542,18 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
 .nav-item { position: relative; }
 .nav-item .nav-count.show { display: block; }
 
-/* ─── Animations ─── */
+
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 .screen.active { animation: fadeUp 0.18s ease both; }
-
-/* ─── Setting rows (used in modal) ─── */
-.setting-row {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 11px 0;
-  border-bottom: 0.5px solid var(--border);
-}
-.setting-row:last-child { border-bottom: none; padding-bottom: 0; }
-.setting-label { font-size: 13px; color: var(--text-0); }
-.setting-sub { font-size: 11px; color: var(--text-2); margin-top: 2px; }
 </style>
 </head>
 <body>
 <div class="app-shell">
 
-  <!-- Header -->
+  
   <header class="app-header">
     <div class="brand">
       <div class="brand-icon">
@@ -632,34 +567,28 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
           <rect x="13" y="8" width="0.7" height="4" rx="0.3" fill="white" opacity="0.4"/>
         </svg>
       </div>
-      PassForge
-    </div>
-    <div class="header-right">
-      <div class="key-pill" id="keyPill" onclick="openApiModal()">
-        <div class="dot"></div>
-        <span id="keyPillLabel">API key</span>
-      </div>
+      <span id="brandName">PassForge</span>
     </div>
   </header>
 
-  <!-- Content -->
+  
   <div class="app-content" id="appContent">
 
-    <!-- ══ BUILDER SCREEN ══ -->
+    
     <div id="screen-builder" class="screen active">
 
-      <!-- Install banner -->
+      
       <div id="installBanner">
         <div style="font-size:20px;">📲</div>
         <div class="install-text">
           <div class="install-title">Add to Home Screen</div>
-          Install PassForge for offline access
+          Install <span id="installBrandHint">PassForge</span> for offline access
         </div>
         <button class="btn btn-xs btn-accent" id="installBtn">Install</button>
         <button class="btn btn-xs btn-ghost" onclick="document.getElementById('installBanner').classList.remove('show')" style="padding:5px 8px;">✕</button>
       </div>
 
-      <!-- Live Pass Preview -->
+      
       <div class="section-label">Live preview</div>
       <div class="pass-wrap">
         <div class="pass-card" id="passCard" style="background:#1a3a28;">
@@ -690,7 +619,7 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
         </div>
       </div>
 
-      <!-- Content Card -->
+      
       <div class="card">
         <div class="card-header">
           <span class="card-title">Pass content</span>
@@ -726,7 +655,7 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
         </div>
       </div>
 
-      <!-- Fields Card -->
+      
       <div class="card">
         <div class="card-header">
           <span class="card-title">Fields</span>
@@ -766,7 +695,7 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
         </div>
       </div>
 
-      <!-- Appearance Card -->
+      
       <div class="card">
         <div class="card-header">
           <span class="card-title">Appearance</span>
@@ -830,7 +759,7 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
         </div>
       </div>
 
-      <!-- Generate -->
+      
       <div class="card" style="background:var(--accent-dim);border-color:var(--border-accent);">
         <button class="btn btn-accent btn-full" id="generateBtn" onclick="generatePass()">
           <span id="generateLabel">Generate .pkpass</span>
@@ -839,7 +768,7 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
       </div>
     </div>
 
-    <!-- ══ PASSES SCREEN ══ -->
+    
     <div id="screen-passes" class="screen">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
         <div class="section-label" style="margin:0;">My passes</div>
@@ -848,7 +777,7 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
       <div id="passesList"></div>
     </div>
 
-    <!-- ══ TEMPLATES SCREEN ══ -->
+    
     <div id="screen-templates" class="screen">
 
       <div class="section-label">Networking</div>
@@ -874,7 +803,7 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
 
   </div>
 
-  <!-- Bottom Navigation — 3 tabs, no Settings -->
+  
   <nav class="bottom-nav">
     <button class="nav-item active" id="nav-builder" onclick="showScreen('builder')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -904,108 +833,98 @@ textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
 
 </div>
 
-<!-- API Key Modal (bottom sheet) -->
-<div class="modal-overlay" id="apiModal" onclick="handleModalClick(event)">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">API Key</div>
-
-    <div class="form-group">
-      <label>WalletWallet API key</label>
-      <div style="display:flex;gap:6px;">
-        <input type="password" id="apiKeyInput" placeholder="ww_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" oninput="saveApiKey()" style="font-family:var(--mono);font-size:11px;flex:1;" autocomplete="off" />
-        <button class="btn btn-xs" onclick="toggleKeyVis()">Show</button>
-      </div>
-      <div class="field-hint">Format: ww_live_ + 32 hex chars · <a href="https://www.walletwallet.dev/signup/" target="_blank" style="color:var(--accent-hi);">Get free key →</a></div>
-    </div>
-
-    <div class="form-group">
-      <label>Base URL</label>
-      <input type="url" id="baseURL" value="https://api.walletwallet.dev" />
-      <div class="field-hint">Change only if using a proxy or custom endpoint.</div>
-    </div>
-
-    <div class="form-group">
-      <label>Pass server (orchestrator)</label>
-      <input type="url" id="orchestratorURL" value="" placeholder="https://your-app.onrender.com" oninput="saveOrchestratorUrl()" style="font-family:var(--mono);font-size:11px;" autocomplete="off" />
-      <div class="field-hint">When set, Generate saves passes here and the Passes tab loads from the server. Stable NFC: <code style="font-size:10px;">/v1/tap/current</code> → active pass.</div>
-    </div>
-
-    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;">
-      <button class="btn btn-xs btn-accent" onclick="fetchUsage()">Test connection</button>
-      <button class="btn btn-xs btn-danger" onclick="clearApiKey()">Clear key</button>
-      <button class="btn btn-xs" onclick="closeApiModal()" style="margin-left:auto;">Done</button>
-    </div>
-    <div id="keyTestMsg"></div>
-
-    <hr class="divider" style="margin:14px 0;" />
-
-    <div class="setting-row">
-      <div><div class="setting-label">Offline support</div><div class="setting-sub">Cached via service worker</div></div>
-      <span id="swStatus" class="badge badge-amber">Checking…</span>
-    </div>
-    <div class="setting-row" style="border-bottom:none;">
-      <div><div class="setting-label">WalletWallet docs</div><div class="setting-sub">walletwallet.dev/docs</div></div>
-      <a href="https://www.walletwallet.dev/docs/" target="_blank" class="btn btn-xs">Open →</a>
-    </div>
-  </div>
-</div>
-
 <script>
-/* ─── State ─── */
+
 let selectedFormat = 'QR';
 let selectedPreset = 'dark';
 let fieldData = { header: [], primary: [], secondary: [], back: [] };
-let apiKey = '';
 let deferredInstallPrompt = null;
 let savedPasses = [];
-/** When set, passes are created & listed on this backend (API base URL). */
 let orchestratorUrl = '';
+
+const PWA_DEFAULTS = { brandName: 'PassForge', orchestratorUrl: '' };
+let pwaConfig = { ...PWA_DEFAULTS };
 
 const presetBg = {
   dark: '#1a3a28', blue: '#1a2850', green: '#1a3a20',
   red: '#3a1a1a', purple: '#2a1a40', orange: '#3a2010'
 };
 
-/* ─── Boot ─── */
-function defaultOrchestratorFromEnv() {
-  try {
-    const s = localStorage.getItem('pf_orch_url');
-    if (s != null) return s;
-  } catch (e) {}
-  if (typeof location !== 'undefined' && (location.protocol === 'https:' || location.protocol === 'http:') && location.host) {
-    return location.origin;
-  }
-  return 'https://digital-card-l5xv.onrender.com';
+function applyPwaConfig() {
+  const c = pwaConfig;
+  const brandEl = document.getElementById('brandName');
+  if (brandEl) brandEl.textContent = c.brandName;
+  const installHint = document.getElementById('installBrandHint');
+  if (installHint) installHint.textContent = c.brandName;
+  document.title = c.brandName + ' — Apple Wallet Pass Generator';
+  const am = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+  if (am) am.setAttribute('content', c.brandName);
 }
-orchestratorUrl = defaultOrchestratorFromEnv();
 
-try { apiKey = localStorage.getItem('pf_api_key') || ''; } catch(e){}
+
+async function probeLocalDevBackend() {
+  if (typeof location === 'undefined') return '';
+  const hn = location.hostname;
+  if (hn !== 'localhost' && hn !== '127.0.0.1') return '';
+  for (const base of ['http://127.0.0.1:8000', 'http://localhost:8000']) {
+    try {
+      const h = await fetch(base + '/healthz', { method: 'GET', credentials: 'omit' });
+      if (h.ok) return base;
+    } catch (e) {}
+  }
+  return '';
+}
+
+async function loadPwaConfig() {
+  let configOk = false;
+  try {
+    const r = await fetch('/api/pwa-config', { credentials: 'same-origin' });
+    if (r.ok) {
+      pwaConfig = { ...PWA_DEFAULTS, ...await r.json() };
+      configOk = true;
+    }
+  } catch (e) {}
+
+  let sameOriginApi = false;
+  if (!configOk && typeof location !== 'undefined' && location.origin && location.protocol !== 'file:') {
+    try {
+      const h = await fetch(location.origin + '/healthz', { method: 'GET', credentials: 'same-origin' });
+      sameOriginApi = h.ok;
+    } catch (e) {}
+  }
+
+  const fromServer = (pwaConfig.orchestratorUrl || '').trim().replace(/\/$/, '');
+  let base = '';
+  if (fromServer) {
+    base = fromServer;
+  } else if (configOk && typeof location !== 'undefined' && location.origin && location.protocol !== 'file:') {
+    base = location.origin.replace(/\/$/, '');
+  } else if (sameOriginApi) {
+    base = location.origin.replace(/\/$/, '');
+  }
+  if (!base) {
+    base = await probeLocalDevBackend();
+  }
+  orchestratorUrl = (base || '').replace(/\/$/, '');
+  applyPwaConfig();
+}
+
+function getOrchBase() {
+  return (orchestratorUrl || '').trim().replace(/\/$/, '');
+}
+
 try { savedPasses = JSON.parse(localStorage.getItem('pf_passes') || '[]'); } catch(e){ savedPasses = []; }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const inp = document.getElementById('apiKeyInput');
-  if (inp && apiKey) inp.value = apiKey;
-  const orchInp = document.getElementById('orchestratorURL');
-  if (orchInp) orchInp.value = orchestratorUrl;
-  updateKeyPill();
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadPwaConfig();
   syncPreview();
-
-  // SW status
-  const sw = document.getElementById('swStatus');
-  if ('serviceWorker' in navigator) {
-    sw.textContent = 'Active'; sw.className = 'badge badge-green';
-  } else {
-    sw.textContent = 'Unsupported'; sw.className = 'badge badge-red';
-  }
-
+  updatePassesNavCount();
   renderPassesList();
-
   const p = new URLSearchParams(location.search).get('tab');
   if (p) showScreen(p);
 });
 
-/* ─── PWA install ─── */
+
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredInstallPrompt = e;
@@ -1022,7 +941,7 @@ window.addEventListener('appinstalled', () => {
   document.getElementById('installBanner').classList.remove('show');
 });
 
-/* ─── Screen navigation ─── */
+
 function showScreen(name) {
   const screen = document.getElementById('screen-' + name);
   if (!screen) { showScreen('builder'); return; }
@@ -1035,62 +954,7 @@ function showScreen(name) {
   if (name === 'passes') renderPassesList();
 }
 
-/* ─── API Modal ─── */
-function openApiModal() {
-  document.getElementById('apiModal').classList.add('open');
-}
-function closeApiModal() {
-  document.getElementById('apiModal').classList.remove('open');
-}
-function handleModalClick(e) {
-  if (e.target === document.getElementById('apiModal')) closeApiModal();
-}
 
-/* ─── API key ─── */
-function saveApiKey() {
-  apiKey = document.getElementById('apiKeyInput').value.trim();
-  try { localStorage.setItem('pf_api_key', apiKey); } catch(e) {}
-  updateKeyPill();
-}
-function getOrchBase() {
-  const el = document.getElementById('orchestratorURL');
-  const t = (el && el.value.trim()) || (orchestratorUrl || '').trim();
-  return t.replace(/\/$/, '');
-}
-function saveOrchestratorUrl() {
-  const el = document.getElementById('orchestratorURL');
-  orchestratorUrl = el && el.value ? el.value.trim() : '';
-  try { localStorage.setItem('pf_orch_url', orchestratorUrl); } catch(e) {}
-  void renderPassesList();
-  updatePassesNavCount();
-}
-function clearApiKey() {
-  apiKey = '';
-  document.getElementById('apiKeyInput').value = '';
-  try { localStorage.removeItem('pf_api_key'); } catch(e) {}
-  updateKeyPill();
-  document.getElementById('keyTestMsg').innerHTML = '<div class="log-item info">API key cleared.</div>';
-}
-function toggleKeyVis() {
-  const inp = document.getElementById('apiKeyInput');
-  inp.type = inp.type === 'password' ? 'text' : 'password';
-}
-function updateKeyPill() {
-  const el = document.getElementById('keyPill');
-  const lbl = document.getElementById('keyPillLabel');
-  if (apiKey && apiKey.startsWith('ww_live_') && apiKey.length >= 40) {
-    el.className = 'key-pill ok';
-    lbl.textContent = 'Key set';
-  } else if (apiKey) {
-    el.className = 'key-pill err';
-    lbl.textContent = 'Invalid';
-  } else {
-    el.className = 'key-pill';
-    lbl.textContent = 'API key';
-  }
-}
-
-/* ─── Format ─── */
 function pickFormat(fmt, el) {
   selectedFormat = fmt;
   document.querySelectorAll('.fmt-btn').forEach(b => b.classList.remove('active'));
@@ -1098,7 +962,7 @@ function pickFormat(fmt, el) {
   syncPreview();
 }
 
-/* ─── Preset ─── */
+
 function pickPreset(preset, el) {
   selectedPreset = preset;
   document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
@@ -1107,7 +971,7 @@ function pickPreset(preset, el) {
   syncPreview();
 }
 
-/* ─── Expiry ─── */
+
 function handleExpiry() {
   const v = document.getElementById('expirySelect').value;
   document.getElementById('customExpRow').style.display = v === 'custom' ? 'block' : 'none';
@@ -1120,7 +984,7 @@ function getExpDays() {
   return parseInt(v);
 }
 
-/** WalletWallet JSON for POST (shared by direct and orchestrator). */
+
 function buildPassPayload() {
   const body = { barcodeValue: document.getElementById('barcodeValue').value.trim(), barcodeFormat: selectedFormat };
   const lt = document.getElementById('logoText').value.trim();
@@ -1141,7 +1005,7 @@ function buildPassPayload() {
   return { body, lt, cc };
 }
 
-/* ─── Fields ─── */
+
 function addField(type) {
   fieldData[type].push({ id: Date.now() + Math.random(), label: '', value: '' });
   renderFieldType(type);
@@ -1170,7 +1034,7 @@ function esc(s) {
   return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-/* ─── Preview ─── */
+
 function syncPreview() {
   const cc = document.getElementById('customColor').value.trim();
   const bg = (cc && /^#[0-9a-fA-F]{6}$/.test(cc)) ? cc : (presetBg[selectedPreset] || '#1a3a28');
@@ -1221,7 +1085,7 @@ function updateBackPreview() {
     fieldData.back.map(f => `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:11px;"><span style="color:var(--text-2)">${f.label||''}</span><span style="color:var(--text-0);font-weight:500;">${f.value||''}</span></div>`).join('');
 }
 
-/* ─── Barcode drawing ─── */
+
 function drawBarcode(fmt, svgEl, size) {
   const svg = svgEl || document.getElementById('barcodePreview');
   const sz = size || 52;
@@ -1260,7 +1124,7 @@ function drawBarcode(fmt, svgEl, size) {
   }
 }
 
-/* ─── Saved Passes ─── */
+
 function persistPasses() {
   try { localStorage.setItem('pf_passes', JSON.stringify(savedPasses)); } catch(e){}
 }
@@ -1350,10 +1214,17 @@ async function renderPassesList() {
   const navCount = document.getElementById('passesNavCount');
   const orch = getOrchBase();
 
-  if (orch) {
+  if (!orch) {
     if (clearBtn) clearBtn.style.display = 'none';
-    container.innerHTML = '<div class="field-hint" style="text-align:center;padding:12px;">Loading…</div>';
-    try {
+    if (navCount) navCount.classList.remove('show');
+    container.innerHTML =
+      '<div class="passes-empty"><h3>Couldn’t load passes</h3><p>Check your internet connection, then pull down to refresh or reopen the app.</p></div>';
+    return;
+  }
+
+  if (clearBtn) clearBtn.style.display = 'none';
+  container.innerHTML = '<div class="field-hint" style="text-align:center;padding:12px;">Loading…</div>';
+  try {
       const [rPass, rSet] = await Promise.all([
         fetch(orch + '/api/passes'),
         fetch(orch + '/api/settings')
@@ -1365,15 +1236,17 @@ async function renderPassesList() {
         const st = rPass.status;
         let hint = '';
         if (st === 0 || st === 502) {
-          hint = 'Network or server unreachable. If the PWA and API are on different domains, set CORS_ORIGINS on the API to your PWA origin (or *).';
+          hint = 'We couldn’t reach the server. Check your connection and try again.';
         } else if (st >= 500) {
-          hint = 'This is a server error — open your host’s logs (e.g. Render → Logs) to see the stack trace. Often: MongoDB connection, bad env, or data shape.';
+          hint = 'Something went wrong on the server. Please try again in a few minutes.';
         } else if (st === 401 || st === 403) {
-          hint = 'Not authorized to call this API.';
+          hint = 'You don’t have access to this right now.';
         } else if (st === 503) {
-          hint = 'Service unavailable — often MONGODB_URI not set, Mongo down, or Atlas IP allowlist blocking Render.';
+          hint = 'The service is temporarily unavailable. Please try again shortly.';
+        } else if (st === 404) {
+          hint = 'This page couldn’t find your passes. Refresh and try again, or open the app from the link your host shared.';
         } else {
-          hint = 'Check the Pass server URL in API settings (must be your API base, no path suffix).';
+          hint = 'Please try again in a moment.';
         }
         container.innerHTML = `<div class="passes-empty"><h3>Couldn’t load passes</h3><p><strong>HTTP ${st}</strong> — ${esc(String(msg))}</p><p style="margin-top:8px;opacity:0.9;">${esc(hint)}</p></div>`;
         return;
@@ -1393,11 +1266,11 @@ async function renderPassesList() {
         container.innerHTML = `
           <div class="passes-nfc-bar"><strong>Stable NFC URL (program once)</strong><code>${esc(nfcUrl)}</code>
           <button type="button" class="btn btn-xs btn-accent" onclick="copyToClipboard(getOrchBase() + '/v1/tap/current')">Copy</button>
-          <p style="margin-top:6px;opacity:0.85">Set an active pass below after you generate. Requires server env <code style="font-size:9px">MONGODB_URI</code>.</p></div>
+          <p style="margin-top:6px;opacity:0.85">After you create a pass, pick one below as <strong>active</strong> so your NFC link uses it.</p></div>
           <div class="passes-empty">
             <div class="passes-empty-icon">🎫</div>
             <h3>No server passes</h3>
-            <p>Build a pass, then <strong>Generate</strong> — the orchestrator will store it and list it here.</p>
+            <p>Go to <strong>Builder</strong>, create a pass, then tap <strong>Generate</strong>. It will show up here.</p>
           </div>`;
         return;
       }
@@ -1448,81 +1321,23 @@ ${isActive ? '<span class="badge badge-active">Active pass is set</span>' : '<sp
       frag.appendChild(listEl);
       container.innerHTML = '';
       container.appendChild(frag);
-    } catch (e) {
-      container.innerHTML = `<div class="passes-empty"><h3>Error</h3><p>${esc(e.message || String(e))}</p></div>`;
-    }
-    return;
+  } catch (e) {
+    container.innerHTML = `<div class="passes-empty"><h3>Error</h3><p>${esc(e.message || String(e))}</p></div>`;
   }
-
-  updatePassesNavCount();
-
-  if (savedPasses.length === 0) {
-    if (clearBtn) clearBtn.style.display = 'none';
-    container.innerHTML = `
-      <div class="passes-empty">
-        <div class="passes-empty-icon">🎫</div>
-        <h3>No passes yet</h3>
-        <p>Passes you generate will appear here so you can keep track of what you've created. Or set a <strong>Pass server</strong> in API settings to sync to your backend.</p>
-      </div>`;
-    return;
-  }
-
-  if (clearBtn) clearBtn.style.display = '';
-
-  container.innerHTML = '';
-  const list = document.createElement('div');
-  list.className = 'saved-pass-list';
-
-  savedPasses.forEach(pass => {
-    const card = document.createElement('div');
-    card.className = 'saved-pass-card';
-
-    const date = new Date(pass.created).toLocaleDateString('en-US', {
-      month: 'short', day: 'numeric', year: 'numeric',
-      hour: '2-digit', minute: '2-digit'
-    });
-
-    card.innerHTML = `
-      <div class="saved-pass-preview" style="background:${pass.bgColor || '#1a3a28'};">
-        <div>
-          <div class="saved-pass-logo">${esc(pass.logoText)}</div>
-          ${pass.primaryValue ? `<div class="saved-pass-primary">${esc(pass.primaryValue)}</div>` : ''}
-        </div>
-        <div class="saved-pass-barcode-mini" id="minibc-${pass.id}"></div>
-      </div>
-      <div class="saved-pass-meta">
-        <div class="saved-pass-info">
-          <div class="saved-pass-name">${esc(pass.primaryLabel || pass.logoText)}</div>
-          <div class="saved-pass-date">${date}</div>
-        </div>
-        <div class="saved-pass-actions">
-          <span class="badge badge-dim" style="margin-right:4px;">${pass.format || 'QR'}</span>
-          <button class="btn btn-xs btn-danger" onclick="deletePass(${pass.id})">Delete</button>
-        </div>
-      </div>`;
-
-    list.appendChild(card);
-  });
-
-  container.appendChild(list);
-
-  savedPasses.forEach(pass => {
-    const wrap = document.getElementById('minibc-' + pass.id);
-    if (!wrap) return;
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    wrap.appendChild(svg);
-    drawBarcode(pass.format || 'QR', svg, 24);
-  });
+  return;
 }
 
-/* ─── Generate pass ─── */
+
 async function generatePass() {
   const bv = document.getElementById('barcodeValue').value.trim();
   if (!bv) { addLog('Barcode value is required.', 'err'); return; }
 
-  const { body, lt, cc } = buildPassPayload();
-  const base = document.getElementById('baseURL').value.trim() || 'https://api.walletwallet.dev';
+  const { body, lt } = buildPassPayload();
   const orch = getOrchBase();
+  if (!orch) {
+    addLog('We couldn’t reach the server. Check your connection and refresh the page.', 'err');
+    return;
+  }
 
   const btn = document.getElementById('generateBtn');
   const lbl = document.getElementById('generateLabel');
@@ -1530,101 +1345,44 @@ async function generatePass() {
   lbl.innerHTML = '<div class="spinner"></div> Generating…';
 
   try {
-    if (orch) {
-      const serverPost = { ...body };
-      serverPost.label = lt || 'Pass';
-      const post = await fetch(orch + '/api/passes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(serverPost)
-      });
-      if (!post.ok) {
-        const j = await post.json().catch(()=>({}));
-        const d = j.detail;
-        const msg = typeof d === 'string' ? d : (post.status + (j.error ? ' ' + j.error : ''));
-        addLog('Orchestrator: ' + (msg || 'request failed'), 'err');
-        btn.disabled = false; lbl.textContent = 'Generate .pkpass';
-        return;
-      }
-      const meta = await post.json();
-      const dl = await fetch(orch + '/api/passes/' + meta.id + '/pkpass');
-      if (!dl.ok) {
-        addLog('Pass created but download failed: ' + dl.status, 'err');
-        addLog('You can still set it active from the Passes tab if listed.', 'info');
-      } else {
-        const blob = await dl.blob();
-        const burl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = burl;
-        a.download = (lt || 'pass').toLowerCase().replace(/\s+/g,'-') + '.pkpass';
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        URL.revokeObjectURL(burl);
-        addLog('Pass saved on server and downloaded.', 'ok');
-      }
-      void renderPassesList();
-    } else {
-      const key = document.getElementById('apiKeyInput').value.trim() || apiKey;
-      if (!key || !key.startsWith('ww_live_')) {
-        addLog('Set a valid WalletWallet API key (or configure Pass server) — tap the key in the header.', 'err');
-        btn.disabled = false; lbl.textContent = 'Generate .pkpass';
-        return;
-      }
-      const resp = await fetch(base + '/api/pkpass', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
-        body: JSON.stringify(body)
-      });
-      if (resp.ok) {
-        const blob = await resp.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = (lt || 'pass').toLowerCase().replace(/\s+/g,'-') + '.pkpass';
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        addLog('Pass generated and downloaded successfully.', 'ok');
-        const bgColor = (cc && /^#[0-9a-fA-F]{6}$/.test(cc)) ? cc : (presetBg[selectedPreset] || '#1a3a28');
-        const prim = fieldData.primary[0];
-        savePassRecord(lt, prim?.label, prim?.value, bgColor, selectedFormat);
-      } else {
-        const err = await resp.json().catch(()=>({error:'Unknown error'}));
-        if (resp.status === 429) addLog(`Rate limit exceeded. Resets ${err.resetDate||'soon'}.`, 'err');
-        else addLog(`Error ${resp.status}: ${err.error || err.detail || 'Request failed'}`, 'err');
-      }
+    const serverPost = { ...body };
+    serverPost.label = lt || 'Pass';
+    const post = await fetch(orch + '/api/passes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(serverPost)
+    });
+    if (!post.ok) {
+      const j = await post.json().catch(()=>({}));
+      const d = j.detail;
+      const msg = typeof d === 'string' ? d : (post.status + (j.error ? ' ' + j.error : ''));
+      addLog('Could not create pass: ' + (msg || 'request failed'), 'err');
+      btn.disabled = false; lbl.textContent = 'Generate .pkpass';
+      return;
     }
+    const meta = await post.json();
+    const dl = await fetch(orch + '/api/passes/' + meta.id + '/pkpass');
+    if (!dl.ok) {
+      addLog('Pass created but download failed: ' + dl.status, 'err');
+      addLog('You can still set it active from the Passes tab if listed.', 'info');
+    } else {
+      const blob = await dl.blob();
+      const burl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = burl;
+      a.download = (lt || 'pass').toLowerCase().replace(/\s+/g,'-') + '.pkpass';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(burl);
+      addLog('Pass saved and downloaded.', 'ok');
+    }
+    void renderPassesList();
   } catch (e) {
     addLog('Network error: ' + e.message, 'err');
   }
   btn.disabled = false; lbl.textContent = 'Generate .pkpass';
 }
 
-/* ─── API test ─── */
-async function fetchUsage() {
-  const key = document.getElementById('apiKeyInput').value.trim() || apiKey;
-  const base = document.getElementById('baseURL').value.trim() || 'https://api.walletwallet.dev';
-  const msg = document.getElementById('keyTestMsg');
-  if (!key || !key.startsWith('ww_live_')) {
-    if (msg) msg.innerHTML = '<div class="log-item err">Set a valid API key first.</div>';
-    return;
-  }
-  try {
-    const resp = await fetch(base + '/api/auth/usage', { headers: { 'Authorization': 'Bearer ' + key } });
-    const data = await resp.json();
-    if (resp.ok) {
-      const plan = data.plan.charAt(0).toUpperCase() + data.plan.slice(1);
-      if (msg) {
-        msg.innerHTML = `<div class="log-item ok">✓ ${plan} plan — ${data.count.toLocaleString()} / ${data.limit.toLocaleString()} used; ${data.remaining.toLocaleString()} remaining. Resets ${data.resetDate}.</div>`;
-      }
-      updateKeyPill();
-    } else {
-      if (msg) msg.innerHTML = `<div class="log-item err">Error ${resp.status}: ${data.error || ''}</div>`;
-    }
-  } catch (e) {
-    if (msg) msg.innerHTML = `<div class="log-item err">Network error: ${e.message}</div>`;
-  }
-}
 
-/* ─── Logs ─── */
 function addLog(msg, type) {
   const list = document.getElementById('logList');
   const div = document.createElement('div');
@@ -1635,7 +1393,7 @@ function addLog(msg, type) {
   while (list.children.length > 5) list.removeChild(list.lastChild);
 }
 
-/* ─── Templates ─── */
+
 const TEMPLATES = {
   biz_card: { logoText:'Your Company', barcodeValue:'https://linkedin.com/in/yourname', preset:'dark', exp:365, header:[{label:'ROLE',value:'VP Sales'}], primary:[{label:'NAME',value:'Your Name'}], secondary:[{label:'COMPANY',value:'Acme Corp'},{label:'PHONE',value:'+91 98765 43210'}], back:[{label:'Email',value:'you@acme.com'},{label:'LinkedIn',value:'linkedin.com/in/yourname'},{label:'Website',value:'acme.com'}] },
   founder: { logoText:'Your Startup', barcodeValue:'https://yourstartup.com/deck', preset:'purple', exp:365, header:[{label:'STAGE',value:'Seed'}], primary:[{label:'FOUNDER',value:'Your Name'}], secondary:[{label:'COMPANY',value:'StartupName'},{label:'FOCUS',value:'AI / SaaS'}], back:[{label:'Pitch deck',value:'yourstartup.com/deck'},{label:'Calendly',value:'cal.com/yourname'},{label:'Tagline',value:'One line about what you do'}] },
@@ -1674,11 +1432,11 @@ function loadTemplate(key) {
   showScreen('builder');
 }
 
-/* ─── Init ─── */
+
 updatePassesNavCount();
 syncPreview();
 
-/* ─── Service Worker ─── */
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(() => {});

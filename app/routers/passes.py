@@ -1,4 +1,3 @@
-"""Create and list DB-backed Apple Wallet passes (MongoDB)."""
 
 from __future__ import annotations
 
@@ -43,10 +42,6 @@ class PassListItem(BaseModel):
     response_model=PassListItem,
 )
 def create_pass(body: dict[str, Any]) -> PassListItem:
-    """
-    Create a pass: validate WalletWallet JSON, call upstream, store pkpass in MongoDB.
-    Optional field ``label`` in the JSON is not sent to WalletWallet.
-    """
     col = _col_or_503()
     raw = deepcopy(body)
     label_val = raw.pop("label", None)
@@ -148,7 +143,6 @@ def list_passes() -> list[PassListItem]:
     responses={200: {"content": {"application/vnd.apple.pkpass": {}}}},
 )
 def download_pkpass(pass_id: str) -> Response:
-    """Return stored .pkpass bytes (for browser / PWA download; not iOS-UA specific)."""
     t = pass_id.strip()
     if len(t) != 24 or not ObjectId.is_valid(t):
         raise HTTPException(status_code=400, detail="Invalid pass id")

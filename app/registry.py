@@ -1,4 +1,3 @@
-"""Load WalletWallet request bodies from JSON files."""
 
 from __future__ import annotations
 
@@ -20,10 +19,6 @@ def cards_dir(base: Path) -> Path:
 
 
 def load_walletwallet_body(base: Path, user_id: str) -> dict[str, Any]:
-    """
-    Load data/cards/{slug}.json as a WalletWallet /api/pkpass JSON body.
-    Supports optional top-level \"meta\" (stripped before validate).
-    """
     slug = normalize_slug(user_id)
     path = cards_dir(base) / f"{slug}.json"
     if not path.is_file():
