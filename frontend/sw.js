@@ -23,8 +23,8 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
-  // Always pass API calls through — never cache
-  if (url.hostname === 'api.walletwallet.dev') {
+  // Any cross-origin request (WalletWallet, Render, etc.) — never use shell cache
+  if (url.origin !== self.location.origin) {
     e.respondWith(fetch(e.request));
     return;
   }

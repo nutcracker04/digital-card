@@ -21,8 +21,8 @@
 html { height: 100%; font-size: 16px; }
 body {
   font-family: 'Sora', sans-serif;
-  background: #0a0f0d;
-  color: #e8ede9;
+  background: #080d0b;
+  color: #e4ebe5;
   min-height: 100%;
   min-height: 100dvh;
   overflow-x: hidden;
@@ -31,47 +31,72 @@ body {
 
 /* ─── CSS Variables ─── */
 :root {
-  --bg-0: #0a0f0d;
-  --bg-1: #111a16;
-  --bg-2: #182119;
-  --bg-3: #1e2b22;
-  --accent: #1a7a5e;
-  --accent-hi: #22a07e;
-  --accent-glow: rgba(26,122,94,0.18);
-  --accent-dim: rgba(26,122,94,0.08);
-  --text-0: #e8ede9;
-  --text-1: #a0b5a5;
-  --text-2: #5a7a62;
-  --border: rgba(255,255,255,0.07);
-  --border-hi: rgba(255,255,255,0.13);
-  --border-accent: rgba(26,122,94,0.4);
+  --bg-0: #080d0b;
+  --bg-1: #0f1712;
+  --bg-2: #162019;
+  --bg-3: #1c2b20;
+  --accent: #18795c;
+  --accent-hi: #1fa876;
+  --accent-glow: rgba(24,121,92,0.2);
+  --accent-dim: rgba(24,121,92,0.07);
+  --text-0: #e4ebe5;
+  --text-1: #96b09b;
+  --text-2: #52745a;
+  --border: rgba(255,255,255,0.06);
+  --border-hi: rgba(255,255,255,0.1);
+  --border-accent: rgba(24,121,92,0.38);
   --red: #e05252;
-  --red-bg: rgba(224,82,82,0.1);
+  --red-bg: rgba(224,82,82,0.08);
   --amber: #d4a043;
-  --amber-bg: rgba(212,160,67,0.1);
-  --green-text: #5ec98a;
-  --green-bg: rgba(94,201,138,0.1);
-  --radius: 12px;
-  --radius-sm: 8px;
-  --radius-xs: 5px;
+  --amber-bg: rgba(212,160,67,0.08);
+  --green-text: #4ec882;
+  --green-bg: rgba(78,200,130,0.08);
+  --radius: 14px;
+  --radius-sm: 9px;
+  --radius-xs: 6px;
   --mono: 'DM Mono', monospace;
-  --shadow: 0 4px 24px rgba(0,0,0,0.5);
-  --pass-radius: 18px;
+  --shadow: 0 4px 28px rgba(0,0,0,0.55);
+  --pass-radius: 20px;
+  /* Fixed shell width — never changes */
+  --shell-w: 440px;
 }
 
 /* ─── Scrollbar ─── */
-::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 2px; }
 
-/* ─── Layout ─── */
+/* ─── Layout — FIXED width shell, no shifts ─── */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100dvh;
+}
+
 .app-shell {
   display: flex;
   flex-direction: column;
-  height: 100dvh;
-  max-width: 480px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: var(--shell-w);
+  min-height: 100dvh;
   position: relative;
+}
+
+/* On desktop — card style */
+@media (min-width: 680px) {
+  body { align-items: center; background: #050907; }
+  .app-shell {
+    max-width: var(--shell-w);
+    height: 92dvh;
+    min-height: unset;
+    border: 0.5px solid var(--border-hi);
+    border-radius: 26px;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.75), 0 0 0 0.5px rgba(255,255,255,0.04) inset;
+  }
+  .app-header { border-radius: 26px 26px 0 0 !important; }
+  .bottom-nav { border-radius: 0 0 26px 26px !important; }
 }
 
 /* ─── Header ─── */
@@ -79,59 +104,67 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px 12px;
-  padding-top: calc(16px + env(safe-area-inset-top));
+  padding: 14px 18px 12px;
+  padding-top: calc(14px + env(safe-area-inset-top));
   border-bottom: 0.5px solid var(--border);
-  background: var(--bg-0);
+  background: rgba(8,13,11,0.95);
   position: sticky;
   top: 0;
   z-index: 50;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  flex-shrink: 0;
 }
 .brand {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   color: var(--text-0);
 }
 .brand-icon {
-  width: 28px; height: 28px;
-  background: var(--accent);
+  width: 27px; height: 27px;
+  background: linear-gradient(135deg, #18795c, #0f5240);
   border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(24,121,92,0.35);
 }
-.brand-icon svg { width: 16px; height: 16px; }
-.header-right { display: flex; align-items: center; gap: 8px; }
-.key-indicator {
+.brand-icon svg { width: 15px; height: 15px; }
+.header-right { display: flex; align-items: center; gap: 7px; }
+
+/* Key pill */
+.key-pill {
   display: flex; align-items: center; gap: 5px;
   font-size: 11px; color: var(--text-2);
   background: var(--bg-2);
-  border: 0.5px solid var(--border);
+  border: 0.5px solid var(--border-hi);
   border-radius: 20px;
-  padding: 4px 10px;
+  padding: 4px 10px 4px 8px;
   cursor: pointer;
   transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
 }
-.key-indicator:hover { border-color: var(--border-accent); color: var(--text-1); }
-.key-indicator .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-2); }
-.key-indicator.ok .dot { background: var(--green-text); }
-.key-indicator.ok { color: var(--green-text); }
-.key-indicator.err .dot { background: var(--red); }
-.key-indicator.err { color: var(--red); }
+.key-pill:hover { border-color: var(--border-accent); color: var(--text-1); }
+.key-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-2); flex-shrink: 0; }
+.key-pill.ok .dot { background: var(--green-text); box-shadow: 0 0 4px var(--green-text); }
+.key-pill.ok { color: var(--green-text); border-color: rgba(78,200,130,0.25); }
+.key-pill.err .dot { background: var(--red); }
+.key-pill.err { color: var(--red); }
 
-/* ─── Bottom nav ─── */
+/* ─── Bottom nav — 3 tabs ─── */
 .bottom-nav {
   display: flex;
   border-top: 0.5px solid var(--border);
-  background: var(--bg-0);
+  background: rgba(8,13,11,0.97);
   padding-bottom: env(safe-area-inset-bottom);
   position: sticky;
   bottom: 0;
   z-index: 50;
+  flex-shrink: 0;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 .nav-item {
   flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
@@ -140,27 +173,41 @@ body {
   cursor: pointer; border: none; background: transparent;
   transition: color 0.15s;
   -webkit-tap-highlight-color: transparent;
+  letter-spacing: 0.02em;
 }
 .nav-item svg { width: 20px; height: 20px; }
 .nav-item.active { color: var(--accent-hi); }
-.nav-item:active { transform: scale(0.92); }
+.nav-item:active { transform: scale(0.91); }
 
-/* ─── Content ─── */
+/* Active indicator dot */
+.nav-item.active::after {
+  content: '';
+  display: block;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--accent-hi);
+  margin: 0 auto;
+  margin-top: -1px;
+}
+
+/* ─── Content — fixed, no width jump ─── */
 .app-content {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+  padding: 18px 18px 24px;
   -webkit-overflow-scrolling: touch;
+  /* This width is always the same */
+  width: 100%;
 }
 
 /* ─── Screens ─── */
-.screen { display: none; }
+.screen { display: none; width: 100%; }
 .screen.active { display: block; }
 
 /* ─── Section headers ─── */
 .section-label {
-  font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.11em;
   text-transform: uppercase; color: var(--text-2);
   margin: 0 0 10px;
 }
@@ -170,22 +217,23 @@ body {
   background: var(--bg-1);
   border: 0.5px solid var(--border);
   border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 12px;
+  padding: 14px;
+  margin-bottom: 10px;
 }
 .card-header {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 13px;
 }
 .card-title { font-size: 13px; font-weight: 500; color: var(--text-0); }
 
 /* ─── Form elements ─── */
-.form-group { margin-bottom: 12px; }
+.form-group { margin-bottom: 11px; }
 .form-group:last-child { margin-bottom: 0; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
 label {
-  display: block; font-size: 11px; font-weight: 500;
-  color: var(--text-2); margin-bottom: 5px; letter-spacing: 0.02em;
+  display: block; font-size: 10px; font-weight: 600;
+  color: var(--text-2); margin-bottom: 5px; letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 input[type="text"],
 input[type="password"],
@@ -197,7 +245,7 @@ textarea {
   background: var(--bg-2);
   border: 0.5px solid var(--border-hi);
   border-radius: var(--radius-sm);
-  padding: 9px 12px;
+  padding: 9px 11px;
   font-size: 13px;
   font-family: 'Sora', sans-serif;
   color: var(--text-0);
@@ -211,14 +259,19 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 0 3px var(--accent-glow);
 }
 input::placeholder, textarea::placeholder { color: var(--text-2); }
-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a7a62' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 30px; }
-textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2352745a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
 .field-hint { font-size: 10px; color: var(--text-2); margin-top: 4px; }
 
 /* ─── Buttons ─── */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  padding: 9px 16px;
+  padding: 9px 14px;
   border-radius: var(--radius-sm);
   border: 0.5px solid var(--border-hi);
   font-size: 13px; font-weight: 500; font-family: 'Sora', sans-serif;
@@ -233,12 +286,14 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
 .btn-accent {
   background: var(--accent); border-color: var(--accent-hi);
   color: #fff;
-  box-shadow: 0 2px 16px var(--accent-glow);
+  box-shadow: 0 2px 14px var(--accent-glow);
 }
 .btn-accent:hover { background: var(--accent-hi); }
 .btn-full { width: 100%; }
-.btn-danger { color: var(--red); border-color: rgba(224,82,82,0.3); }
-.btn-danger:hover { background: var(--red-bg); }
+.btn-danger { color: var(--red); border-color: rgba(224,82,82,0.25); }
+.btn-danger:hover { background: var(--red-bg); border-color: var(--red); }
+.btn-ghost { background: transparent; border-color: transparent; color: var(--text-2); }
+.btn-ghost:hover { background: var(--bg-2); border-color: var(--border-hi); color: var(--text-0); }
 
 /* ─── Badges ─── */
 .badge {
@@ -246,64 +301,65 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
   border-radius: 20px; font-size: 10px; font-weight: 600; letter-spacing: 0.03em;
 }
 .badge-pro { background: var(--accent-dim); color: var(--accent-hi); border: 0.5px solid var(--border-accent); }
-.badge-green { background: var(--green-bg); color: var(--green-text); }
+.badge-green { background: var(--green-bg); color: var(--green-text); border: 0.5px solid rgba(78,200,130,0.2); }
 .badge-red { background: var(--red-bg); color: var(--red); }
 .badge-amber { background: var(--amber-bg); color: var(--amber); }
+.badge-dim { background: var(--bg-3); color: var(--text-2); }
 
 /* ─── Pass Preview ─── */
 .pass-wrap {
   perspective: 900px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 .pass-card {
   border-radius: var(--pass-radius);
-  padding: 18px 18px 14px;
+  padding: 17px 17px 14px;
   color: #fff;
   position: relative;
   overflow: hidden;
   transition: background 0.35s ease;
   transform-style: preserve-3d;
-  min-height: 190px;
+  min-height: 186px;
   box-shadow: var(--shadow);
 }
 .pass-card::after {
   content: '';
   position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 55%);
   pointer-events: none;
   border-radius: inherit;
 }
 .pass-noise {
-  position: absolute; inset: 0; opacity: 0.04; pointer-events: none;
+  position: absolute; inset: 0; opacity: 0.03; pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-.pass-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
-.pass-logo-text { font-size: 13px; font-weight: 600; letter-spacing: 0.04em; opacity: 0.95; max-width: 55%; }
+.pass-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 13px; }
+.pass-logo-text { font-size: 12px; font-weight: 600; letter-spacing: 0.05em; opacity: 0.92; max-width: 55%; }
 .pass-header-area { text-align: right; }
-.pass-f-label { font-size: 8px; opacity: 0.55; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1px; }
+.pass-f-label { font-size: 8px; opacity: 0.5; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1px; }
 .pass-f-value { font-size: 14px; font-weight: 600; }
-.pass-primary-area { margin-bottom: 10px; }
-.pass-primary-area .pass-f-value { font-size: 22px; font-weight: 700; line-height: 1.1; }
-.pass-secondary-row { display: flex; gap: 18px; margin-bottom: 12px; }
+.pass-primary-area { margin-bottom: 9px; }
+.pass-primary-area .pass-f-value { font-size: 21px; font-weight: 700; line-height: 1.1; }
+.pass-secondary-row { display: flex; gap: 16px; margin-bottom: 11px; }
 .pass-bottom { display: flex; align-items: flex-end; justify-content: space-between; }
-.pass-expiry { font-size: 9px; opacity: 0.5; letter-spacing: 0.04em; }
+.pass-expiry { font-size: 9px; opacity: 0.45; letter-spacing: 0.04em; }
 .pass-barcode-wrap {
   background: #fff;
   border-radius: 8px;
-  padding: 8px;
+  padding: 7px;
   display: flex; align-items: center; justify-content: center;
 }
 .pass-barcode-wrap svg { display: block; }
 
 /* ─── Field rows ─── */
 .field-row {
-  display: flex; align-items: center; gap: 6px;
+  display: flex; align-items: center; gap: 5px;
   margin-bottom: 6px;
 }
 .field-row input { flex: 1; font-size: 12px; padding: 7px 10px; }
 .field-row .sep { font-size: 11px; color: var(--text-2); flex-shrink: 0; }
 .remove-btn {
-  width: 26px; height: 26px; flex-shrink: 0;
+  width: 25px; height: 25px; flex-shrink: 0;
   border-radius: 50%; border: 0.5px solid var(--border);
   background: transparent; color: var(--text-2);
   cursor: pointer; font-size: 14px; line-height: 1;
@@ -326,62 +382,52 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
 .fmt-btn:active { transform: scale(0.95); }
 .fmt-btn.active { border-color: var(--accent); background: var(--accent-dim); }
 .fmt-name { font-size: 12px; font-weight: 600; color: var(--text-0); }
-.fmt-desc { font-size: 9px; color: var(--text-2); margin-top: 2px; }
+.fmt-desc { font-size: 9px; color: var(--text-2); margin-top: 1px; }
 .fmt-btn.active .fmt-name { color: var(--accent-hi); }
 
 /* ─── Color swatches ─── */
 .swatch-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .swatch {
-  width: 30px; height: 30px; border-radius: 50%;
+  width: 28px; height: 28px; border-radius: 50%;
   cursor: pointer;
   border: 2px solid transparent;
   transition: transform 0.15s, border-color 0.15s;
   -webkit-tap-highlight-color: transparent;
 }
 .swatch:active { transform: scale(0.9); }
-.swatch.active { border-color: rgba(255,255,255,0.7); transform: scale(1.12); }
+.swatch.active { border-color: rgba(255,255,255,0.75); transform: scale(1.13); box-shadow: 0 0 0 2px rgba(0,0,0,0.4); }
 
 /* ─── Logs ─── */
-.log-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.log-list { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
 .log-item {
-  padding: 8px 12px; border-radius: var(--radius-xs);
+  padding: 8px 11px; border-radius: var(--radius-xs);
   font-size: 11px; font-family: var(--mono);
-  line-height: 1.4;
+  line-height: 1.45;
 }
 .log-item.ok { background: var(--green-bg); color: var(--green-text); }
 .log-item.err { background: var(--red-bg); color: var(--red); }
-.log-item.info { background: var(--bg-2); color: var(--text-1); }
+.log-item.info { background: var(--bg-3); color: var(--text-1); }
 
 /* ─── Templates ─── */
-.template-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.template-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
 .tpl-btn {
   background: var(--bg-2); border: 0.5px solid var(--border);
-  border-radius: var(--radius-sm); padding: 12px;
+  border-radius: var(--radius-sm); padding: 11px;
   cursor: pointer; text-align: left; transition: all 0.15s;
   -webkit-tap-highlight-color: transparent;
 }
 .tpl-btn:hover { border-color: var(--border-accent); background: var(--accent-dim); }
 .tpl-btn:active { transform: scale(0.97); }
-.tpl-icon { font-size: 18px; margin-bottom: 5px; }
+.tpl-icon { font-size: 17px; margin-bottom: 5px; }
 .tpl-name { font-size: 12px; font-weight: 500; color: var(--text-0); }
 .tpl-desc { font-size: 10px; color: var(--text-2); margin-top: 2px; }
 
-/* ─── Settings ─── */
-.setting-row {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 0.5px solid var(--border);
-}
-.setting-row:last-child { border-bottom: none; padding-bottom: 0; }
-.setting-label { font-size: 13px; color: var(--text-0); }
-.setting-sub { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+/* ─── Divider ─── */
+.divider { border: none; border-top: 0.5px solid var(--border); margin: 12px 0; }
 
 /* ─── Spinner ─── */
 @keyframes spin { to { transform: rotate(360deg); } }
 .spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.25); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
-
-/* ─── Divider ─── */
-.divider { border: none; border-top: 0.5px solid var(--border); margin: 12px 0; }
 
 /* ─── Install banner ─── */
 #installBanner {
@@ -390,7 +436,7 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
   background: linear-gradient(135deg, var(--accent-dim), transparent);
   border: 0.5px solid var(--border-accent);
   border-radius: var(--radius);
-  padding: 12px 14px;
+  padding: 11px 13px;
   align-items: center;
   gap: 10px;
 }
@@ -398,31 +444,175 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
 #installBanner .install-text { flex: 1; font-size: 12px; color: var(--text-1); }
 #installBanner .install-title { font-size: 13px; font-weight: 500; color: var(--text-0); margin-bottom: 2px; }
 
-/* ─── Desktop adaptation ─── */
-@media (min-width: 600px) {
-  .app-shell { max-width: 520px; }
-  .app-content { padding: 24px; }
+/* ─── API Key modal ─── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s;
 }
-@media (min-width: 900px) {
-  body { display: flex; align-items: center; justify-content: center; }
-  .app-shell {
-    max-width: 420px;
-    height: 92vh;
-    border: 0.5px solid var(--border);
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.7);
-  }
-  .app-header { border-radius: 24px 24px 0 0; }
-  .bottom-nav { border-radius: 0 0 24px 24px; }
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-sheet {
+  background: var(--bg-1);
+  border: 0.5px solid var(--border-hi);
+  border-radius: 20px 20px 0 0;
+  padding: 20px 18px 32px;
+  width: 100%;
+  max-width: var(--shell-w);
+  transform: translateY(100%);
+  transition: transform 0.25s cubic-bezier(0.32,0.72,0,1);
+  padding-bottom: calc(32px + env(safe-area-inset-bottom));
 }
+.modal-overlay.open .modal-sheet { transform: translateY(0); }
+.modal-handle {
+  width: 36px; height: 4px;
+  background: var(--bg-3);
+  border-radius: 2px;
+  margin: 0 auto 18px;
+}
+.modal-title {
+  font-size: 15px; font-weight: 600; color: var(--text-0);
+  margin-bottom: 14px;
+}
+
+/* ─── Passes page ─── */
+.passes-empty {
+  text-align: center;
+  padding: 60px 20px 40px;
+}
+.passes-empty-icon {
+  font-size: 40px;
+  margin-bottom: 14px;
+  opacity: 0.4;
+}
+.passes-empty h3 {
+  font-size: 15px; font-weight: 500; color: var(--text-1);
+  margin-bottom: 6px;
+}
+.passes-empty p {
+  font-size: 12px; color: var(--text-2); line-height: 1.55;
+}
+.passes-nfc-bar {
+  background: var(--bg-1);
+  border: 0.5px solid var(--border-accent);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  font-size: 11px;
+  color: var(--text-1);
+  line-height: 1.45;
+}
+.passes-nfc-bar code {
+  display: block; font-family: var(--mono); font-size: 10px; word-break: break-all;
+  color: var(--accent-hi); margin: 6px 0 8px;
+}
+.badge-active { background: var(--green-bg) !important; color: var(--green-text) !important; border-color: rgba(78,200,130,0.25) !important; }
+.server-pass-preview {
+  min-height: 64px; border-radius: 10px; display: flex; flex-direction: column; justify-content: center;
+  padding: 10px 12px; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.92);
+}
+
+/* Saved pass card */
+.saved-pass-list { display: flex; flex-direction: column; gap: 9px; }
+.saved-pass-card {
+  background: var(--bg-1);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+.saved-pass-card:hover { border-color: var(--border-hi); }
+
+.saved-pass-preview {
+  height: 80px;
+  position: relative;
+  overflow: hidden;
+  padding: 12px 13px 10px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.saved-pass-preview::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+.saved-pass-logo {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+  color: #fff; opacity: 0.9;
+}
+.saved-pass-primary {
+  font-size: 18px; font-weight: 700; color: #fff;
+  margin-top: 6px;
+  line-height: 1.1;
+}
+.saved-pass-barcode-mini {
+  background: rgba(255,255,255,0.92);
+  border-radius: 5px;
+  padding: 4px;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.saved-pass-meta {
+  padding: 9px 13px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 0.5px solid var(--border);
+}
+.saved-pass-info { flex: 1; min-width: 0; }
+.saved-pass-name {
+  font-size: 12px; font-weight: 500; color: var(--text-0);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.saved-pass-date {
+  font-size: 10px; color: var(--text-2); margin-top: 2px;
+}
+.saved-pass-actions { display: flex; gap: 5px; }
+
+/* Passes count badge in nav */
+.nav-count {
+  display: none;
+  position: absolute;
+  top: 7px;
+  background: var(--accent-hi);
+  color: #fff;
+  font-size: 8px;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 1px 4px;
+  min-width: 14px;
+  text-align: center;
+  line-height: 12px;
+}
+.nav-item { position: relative; }
+.nav-item .nav-count.show { display: block; }
 
 /* ─── Animations ─── */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.screen.active { animation: fadeUp 0.2s ease both; }
+.screen.active { animation: fadeUp 0.18s ease both; }
+
+/* ─── Setting rows (used in modal) ─── */
+.setting-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 0;
+  border-bottom: 0.5px solid var(--border);
+}
+.setting-row:last-child { border-bottom: none; padding-bottom: 0; }
+.setting-label { font-size: 13px; color: var(--text-0); }
+.setting-sub { font-size: 11px; color: var(--text-2); margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -445,9 +635,9 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
       PassForge
     </div>
     <div class="header-right">
-      <div class="key-indicator" id="keyIndicator" onclick="showScreen('settings')">
+      <div class="key-pill" id="keyPill" onclick="openApiModal()">
         <div class="dot"></div>
-        <span id="keyIndicatorLabel">No key</span>
+        <span id="keyPillLabel">API key</span>
       </div>
     </div>
   </header>
@@ -460,13 +650,13 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
 
       <!-- Install banner -->
       <div id="installBanner">
-        <div style="font-size:22px;">📲</div>
+        <div style="font-size:20px;">📲</div>
         <div class="install-text">
           <div class="install-title">Add to Home Screen</div>
           Install PassForge for offline access
         </div>
         <button class="btn btn-xs btn-accent" id="installBtn">Install</button>
-        <button class="btn btn-xs" onclick="document.getElementById('installBanner').classList.remove('show')" style="padding:5px 8px;">✕</button>
+        <button class="btn btn-xs btn-ghost" onclick="document.getElementById('installBanner').classList.remove('show')" style="padding:5px 8px;">✕</button>
       </div>
 
       <!-- Live Pass Preview -->
@@ -494,7 +684,7 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
           <div class="pass-bottom">
             <div class="pass-expiry" id="pvExpiry"></div>
             <div class="pass-barcode-wrap">
-              <svg id="barcodePreview" width="56" height="56"></svg>
+              <svg id="barcodePreview" width="52" height="52"></svg>
             </div>
           </div>
         </div>
@@ -506,7 +696,7 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
           <span class="card-title">Pass content</span>
         </div>
 
-        <div class="form-row" style="margin-bottom:12px;">
+        <div class="form-row" style="margin-bottom:11px;">
           <div class="form-group" style="margin:0">
             <label>Logo text</label>
             <input type="text" id="logoText" placeholder="My Brand" oninput="syncPreview()" autocomplete="off" />
@@ -542,25 +732,25 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
           <span class="card-title">Fields</span>
         </div>
 
-        <div style="margin-bottom:12px;">
+        <div style="margin-bottom:11px;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
-            <label style="margin:0;font-size:10px;">Header fields <span style="opacity:0.6">(top-right)</span></label>
+            <label style="margin:0;">Header <span style="opacity:0.5;text-transform:none;font-size:10px;">(top-right)</span></label>
             <button class="btn btn-xs" onclick="addField('header')">+ Add</button>
           </div>
           <div id="headerFields"></div>
         </div>
 
-        <div style="margin-bottom:12px;">
+        <div style="margin-bottom:11px;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
-            <label style="margin:0;font-size:10px;">Primary fields <span style="opacity:0.6">(main)</span></label>
+            <label style="margin:0;">Primary <span style="opacity:0.5;text-transform:none;font-size:10px;">(main)</span></label>
             <button class="btn btn-xs" onclick="addField('primary')">+ Add</button>
           </div>
           <div id="primaryFields"></div>
         </div>
 
-        <div style="margin-bottom:12px;">
+        <div style="margin-bottom:11px;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
-            <label style="margin:0;font-size:10px;">Secondary fields <span style="opacity:0.6">(below primary)</span></label>
+            <label style="margin:0;">Secondary <span style="opacity:0.5;text-transform:none;font-size:10px;">(below primary)</span></label>
             <button class="btn btn-xs" onclick="addField('secondary')">+ Add</button>
           </div>
           <div id="secondaryFields"></div>
@@ -568,7 +758,7 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
 
         <div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
-            <label style="margin:0;font-size:10px;">Back fields <span style="opacity:0.6">(back of pass)</span></label>
+            <label style="margin:0;">Back <span style="opacity:0.5;text-transform:none;font-size:10px;">(back of pass)</span></label>
             <button class="btn btn-xs" onclick="addField('back')">+ Add</button>
           </div>
           <div id="backFields"></div>
@@ -585,18 +775,18 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
         <div class="form-group">
           <label>Color theme</label>
           <div class="swatch-row" id="swatchRow">
-            <div class="swatch active" style="background:#1a3a28;" data-preset="dark" onclick="pickPreset('dark',this)"></div>
-            <div class="swatch" style="background:#1e3a8a;" data-preset="blue" onclick="pickPreset('blue',this)"></div>
-            <div class="swatch" style="background:#14532d;" data-preset="green" onclick="pickPreset('green',this)"></div>
-            <div class="swatch" style="background:#7f1d1d;" data-preset="red" onclick="pickPreset('red',this)"></div>
-            <div class="swatch" style="background:#4c1d95;" data-preset="purple" onclick="pickPreset('purple',this)"></div>
-            <div class="swatch" style="background:#7c2d12;" data-preset="orange" onclick="pickPreset('orange',this)"></div>
+            <div class="swatch active" style="background:#1a3a28;" data-preset="dark" onclick="pickPreset('dark',this)" title="Forest"></div>
+            <div class="swatch" style="background:#1a2850;" data-preset="blue" onclick="pickPreset('blue',this)" title="Navy"></div>
+            <div class="swatch" style="background:#1a3a20;" data-preset="green" onclick="pickPreset('green',this)" title="Sage"></div>
+            <div class="swatch" style="background:#3a1a1a;" data-preset="red" onclick="pickPreset('red',this)" title="Crimson"></div>
+            <div class="swatch" style="background:#2a1a40;" data-preset="purple" onclick="pickPreset('purple',this)" title="Plum"></div>
+            <div class="swatch" style="background:#3a2010;" data-preset="orange" onclick="pickPreset('orange',this)" title="Ember"></div>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group" style="margin:0">
-            <label>Custom hex color <span class="badge badge-pro">Pro</span></label>
+            <label>Custom hex <span class="badge badge-pro">Pro</span></label>
             <input type="text" id="customColor" placeholder="#1e40af" oninput="syncPreview()" autocomplete="off" />
           </div>
           <div class="form-group" style="margin:0">
@@ -610,7 +800,7 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
             </select>
           </div>
         </div>
-        <div id="customExpRow" style="display:none;margin-top:10px;" class="form-group">
+        <div id="customExpRow" style="display:none;margin-top:9px;" class="form-group">
           <label>Custom days (1–3650)</label>
           <input type="number" id="customExpDays" min="1" max="3650" placeholder="180" oninput="syncPreview()" />
         </div>
@@ -620,22 +810,22 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
         <div class="form-group">
           <label>Logo URL <span class="badge badge-pro">Pro</span></label>
           <input type="url" id="logoURL" placeholder="https://example.com/logo.png" />
-          <div class="field-hint">HTTPS only · PNG data URIs accepted</div>
+          <div class="field-hint">HTTPS only · PNG / data URI</div>
         </div>
 
         <div class="form-row">
           <div class="form-group" style="margin:0">
-            <label>Thumbnail URL <span class="badge badge-pro">Pro</span></label>
+            <label>Thumbnail <span class="badge badge-pro">Pro</span></label>
             <input type="url" id="thumbnailURL" placeholder="https://…/thumb.png" />
           </div>
           <div class="form-group" style="margin:0">
-            <label>Strip image URL <span class="badge badge-pro">Pro</span></label>
+            <label>Strip image <span class="badge badge-pro">Pro</span></label>
             <input type="url" id="stripURL" placeholder="https://…/strip.png" />
           </div>
         </div>
 
-        <div class="form-group" style="margin-top:10px;">
-          <label>Accessibility description</label>
+        <div class="form-group" style="margin-top:9px;">
+          <label>Accessibility label</label>
           <input type="text" id="description" placeholder="Defaults to logo text" />
         </div>
       </div>
@@ -649,170 +839,42 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
       </div>
     </div>
 
+    <!-- ══ PASSES SCREEN ══ -->
+    <div id="screen-passes" class="screen">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div class="section-label" style="margin:0;">My passes</div>
+        <button class="btn btn-xs btn-danger" id="clearAllBtn" onclick="clearAllPasses()" style="display:none;">Clear all</button>
+      </div>
+      <div id="passesList"></div>
+    </div>
+
     <!-- ══ TEMPLATES SCREEN ══ -->
     <div id="screen-templates" class="screen">
 
       <div class="section-label">Networking</div>
       <div class="template-grid">
-        <div class="tpl-btn" onclick="loadTemplate('biz_card')">
-          <div class="tpl-icon">🤝</div>
-          <div class="tpl-name">Business Card</div>
-          <div class="tpl-desc">Digital visiting card + QR</div>
-        </div>
-        <div class="tpl-btn" onclick="loadTemplate('founder')">
-          <div class="tpl-icon">🚀</div>
-          <div class="tpl-name">Founder Pass</div>
-          <div class="tpl-desc">Startup pitch + deck link</div>
-        </div>
-        <div class="tpl-btn" onclick="loadTemplate('freelancer')">
-          <div class="tpl-icon">🎨</div>
-          <div class="tpl-name">Freelancer</div>
-          <div class="tpl-desc">Rate + availability + portfolio</div>
-        </div>
-        <div class="tpl-btn" onclick="loadTemplate('speaker')">
-          <div class="tpl-icon">🎤</div>
-          <div class="tpl-name">Speaker Pass</div>
-          <div class="tpl-desc">Topic + booking link</div>
-        </div>
-        <div class="tpl-btn" onclick="loadTemplate('job_seeker')">
-          <div class="tpl-icon">💼</div>
-          <div class="tpl-name">Job Seeker</div>
-          <div class="tpl-desc">Open roles + resume QR</div>
-        </div>
-        <div class="tpl-btn" onclick="loadTemplate('conf_badge')">
-          <div class="tpl-icon">🪪</div>
-          <div class="tpl-name">Conf. Badge</div>
-          <div class="tpl-desc">Event attendee + company</div>
-        </div>
+        <div class="tpl-btn" onclick="loadTemplate('biz_card')"><div class="tpl-icon">🤝</div><div class="tpl-name">Business Card</div><div class="tpl-desc">Digital visiting card + QR</div></div>
+        <div class="tpl-btn" onclick="loadTemplate('founder')"><div class="tpl-icon">🚀</div><div class="tpl-name">Founder Pass</div><div class="tpl-desc">Startup pitch + deck link</div></div>
+        <div class="tpl-btn" onclick="loadTemplate('freelancer')"><div class="tpl-icon">🎨</div><div class="tpl-name">Freelancer</div><div class="tpl-desc">Rate + availability + portfolio</div></div>
+        <div class="tpl-btn" onclick="loadTemplate('speaker')"><div class="tpl-icon">🎤</div><div class="tpl-name">Speaker Pass</div><div class="tpl-desc">Topic + booking link</div></div>
+        <div class="tpl-btn" onclick="loadTemplate('job_seeker')"><div class="tpl-icon">💼</div><div class="tpl-name">Job Seeker</div><div class="tpl-desc">Open roles + resume QR</div></div>
+        <div class="tpl-btn" onclick="loadTemplate('conf_badge')"><div class="tpl-icon">🪪</div><div class="tpl-name">Conf. Badge</div><div class="tpl-desc">Event attendee + company</div></div>
       </div>
 
-      <div class="section-label" style="margin-top:18px;">Sales</div>
+      <div class="section-label" style="margin-top:16px;">Sales</div>
       <div class="template-grid">
-        <div class="tpl-btn" onclick="loadTemplate('sales_intro')">
-          <div class="tpl-icon">💬</div>
-          <div class="tpl-name">Sales Rep Card</div>
-          <div class="tpl-desc">AE intro + book a demo</div>
-        </div>
-        <div class="tpl-btn" onclick="loadTemplate('demo_invite')">
-          <div class="tpl-icon">🖥️</div>
-          <div class="tpl-name">Demo Invite</div>
-          <div class="tpl-desc">Slot + join link + prep</div>
-        </div>
-        <div class="tpl-btn" onclick="loadTemplate('proposal')">
-          <div class="tpl-icon">📋</div>
-          <div class="tpl-name">Proposal Pass</div>
-          <div class="tpl-desc">Deal value + expiry date</div>
-        </div>
-        <div class="tpl-btn" onclick="loadTemplate('partner')">
-          <div class="tpl-icon">🤜</div>
-          <div class="tpl-name">Partner Pass</div>
-          <div class="tpl-desc">Reseller tier + margin</div>
-        </div>
-        <div class="tpl-btn" onclick="loadTemplate('referral')">
-          <div class="tpl-icon">🎯</div>
-          <div class="tpl-name">Referral Pass</div>
-          <div class="tpl-desc">Code + reward amount</div>
-        </div>
-        <div class="tpl-btn" onclick="loadTemplate('prospect')">
-          <div class="tpl-icon">📞</div>
-          <div class="tpl-name">Prospect Follow-up</div>
-          <div class="tpl-desc">Next step + AE contact</div>
-        </div>
-      </div>
-
-      <div class="section-label" style="margin-top:18px;">General</div>
-      <div class="template-grid">
-        <div class="tpl-btn" onclick="loadTemplate('loyalty')">
-          <div class="tpl-icon">☕</div>
-          <div class="tpl-name">Loyalty Card</div>
-          <div class="tpl-desc">Coffee rewards + balance</div>
-        </div>
-        <div class="tpl-btn" onclick="loadTemplate('ticket')">
-          <div class="tpl-icon">🎵</div>
-          <div class="tpl-name">Event Ticket</div>
-          <div class="tpl-desc">Concert with seat + gate</div>
-        </div>
-        <div class="tpl-btn" onclick="loadTemplate('coupon')">
-          <div class="tpl-icon">🏷️</div>
-          <div class="tpl-name">Coupon</div>
-          <div class="tpl-desc">Discount with code</div>
-        </div>
-        <div class="tpl-btn" onclick="loadTemplate('membership')">
-          <div class="tpl-icon">💪</div>
-          <div class="tpl-name">Membership</div>
-          <div class="tpl-desc">Gym / club access</div>
-        </div>
-        <div class="tpl-btn" onclick="loadTemplate('boarding')">
-          <div class="tpl-icon">✈️</div>
-          <div class="tpl-name">Boarding Pass</div>
-          <div class="tpl-desc">Flight with seat + gate</div>
-        </div>
-        <div class="tpl-btn" onclick="loadTemplate('order')">
-          <div class="tpl-icon">📦</div>
-          <div class="tpl-name">Order Pickup</div>
-          <div class="tpl-desc">Ready notification</div>
-        </div>
-        <div class="tpl-btn" onclick="loadTemplate('gift')">
-          <div class="tpl-icon">🎁</div>
-          <div class="tpl-name">Gift Card</div>
-          <div class="tpl-desc">Store credit</div>
-        </div>
-        <div class="tpl-btn" onclick="loadTemplate('access')">
-          <div class="tpl-icon">🔑</div>
-          <div class="tpl-name">Access Pass</div>
-          <div class="tpl-desc">VIP / event entry</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ SETTINGS SCREEN ══ -->
-    <div id="screen-settings" class="screen">
-      <div class="card">
-        <div class="card-header"><span class="card-title">API key</span></div>
-        <div class="form-group">
-          <label>WalletWallet API key</label>
-          <div style="display:flex;gap:6px;">
-            <input type="password" id="apiKeyInput" placeholder="ww_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" oninput="saveApiKey()" style="font-family:var(--mono);font-size:11px;flex:1;" autocomplete="off" />
-            <button class="btn btn-xs" onclick="toggleKeyVis()">Show</button>
-          </div>
-          <div class="field-hint">Format: ww_live_ + 32 hex chars · <a href="https://www.walletwallet.dev/signup/" target="_blank" style="color:var(--accent-hi);">Get free key →</a></div>
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-xs btn-accent" onclick="fetchUsage()">Test connection</button>
-          <button class="btn btn-xs btn-danger" onclick="clearApiKey()">Clear key</button>
-        </div>
-        <div id="keyTestMsg" style="margin-top:8px;"></div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-title">API settings</span></div>
-        <div class="form-group">
-          <label>Base URL</label>
-          <input type="url" id="baseURL" value="https://api.walletwallet.dev" />
-          <div class="field-hint">Change only if using a proxy or custom endpoint.</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-title">About</span></div>
-        <div class="setting-row">
-          <div><div class="setting-label">PassForge</div><div class="setting-sub">WalletWallet white-label PWA</div></div>
-          <span class="badge badge-green">v1.0</span>
-        </div>
-        <div class="setting-row">
-          <div><div class="setting-label">Offline support</div><div class="setting-sub">Cached via service worker</div></div>
-          <span id="swStatus" class="badge badge-amber">Checking…</span>
-        </div>
-        <div class="setting-row" style="border-bottom:none;">
-          <div><div class="setting-label">WalletWallet docs</div><div class="setting-sub">walletwallet.dev/docs</div></div>
-          <a href="https://www.walletwallet.dev/docs/" target="_blank" class="btn btn-xs">Open →</a>
-        </div>
+        <div class="tpl-btn" onclick="loadTemplate('sales_intro')"><div class="tpl-icon">💬</div><div class="tpl-name">Sales Rep Card</div><div class="tpl-desc">AE intro + book a demo</div></div>
+        <div class="tpl-btn" onclick="loadTemplate('demo_invite')"><div class="tpl-icon">🖥️</div><div class="tpl-name">Demo Invite</div><div class="tpl-desc">Slot + join link + prep</div></div>
+        <div class="tpl-btn" onclick="loadTemplate('proposal')"><div class="tpl-icon">📋</div><div class="tpl-name">Proposal Pass</div><div class="tpl-desc">Deal value + expiry date</div></div>
+        <div class="tpl-btn" onclick="loadTemplate('partner')"><div class="tpl-icon">🤜</div><div class="tpl-name">Partner Pass</div><div class="tpl-desc">Reseller tier + margin</div></div>
+        <div class="tpl-btn" onclick="loadTemplate('referral')"><div class="tpl-icon">🎯</div><div class="tpl-name">Referral Pass</div><div class="tpl-desc">Code + reward amount</div></div>
+        <div class="tpl-btn" onclick="loadTemplate('prospect')"><div class="tpl-icon">📞</div><div class="tpl-name">Prospect Follow-up</div><div class="tpl-desc">Next step + AE contact</div></div>
       </div>
     </div>
 
   </div>
 
-  <!-- Bottom Navigation -->
+  <!-- Bottom Navigation — 3 tabs, no Settings -->
   <nav class="bottom-nav">
     <button class="nav-item active" id="nav-builder" onclick="showScreen('builder')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -822,6 +884,15 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
       </svg>
       Builder
     </button>
+    <button class="nav-item" id="nav-passes" onclick="showScreen('passes')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="4" width="20" height="6" rx="2"/>
+        <rect x="2" y="14" width="20" height="6" rx="2"/>
+        <path d="M6 7h2M6 17h2"/>
+      </svg>
+      <span class="nav-count" id="passesNavCount">0</span>
+      Passes
+    </button>
     <button class="nav-item" id="nav-templates" onclick="showScreen('templates')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/>
@@ -829,15 +900,55 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
       </svg>
       Templates
     </button>
-    <button class="nav-item" id="nav-settings" onclick="showScreen('settings')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="3"/>
-        <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-      </svg>
-      Settings
-    </button>
   </nav>
 
+</div>
+
+<!-- API Key Modal (bottom sheet) -->
+<div class="modal-overlay" id="apiModal" onclick="handleModalClick(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">API Key</div>
+
+    <div class="form-group">
+      <label>WalletWallet API key</label>
+      <div style="display:flex;gap:6px;">
+        <input type="password" id="apiKeyInput" placeholder="ww_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" oninput="saveApiKey()" style="font-family:var(--mono);font-size:11px;flex:1;" autocomplete="off" />
+        <button class="btn btn-xs" onclick="toggleKeyVis()">Show</button>
+      </div>
+      <div class="field-hint">Format: ww_live_ + 32 hex chars · <a href="https://www.walletwallet.dev/signup/" target="_blank" style="color:var(--accent-hi);">Get free key →</a></div>
+    </div>
+
+    <div class="form-group">
+      <label>Base URL</label>
+      <input type="url" id="baseURL" value="https://api.walletwallet.dev" />
+      <div class="field-hint">Change only if using a proxy or custom endpoint.</div>
+    </div>
+
+    <div class="form-group">
+      <label>Pass server (orchestrator)</label>
+      <input type="url" id="orchestratorURL" value="" placeholder="https://your-app.onrender.com" oninput="saveOrchestratorUrl()" style="font-family:var(--mono);font-size:11px;" autocomplete="off" />
+      <div class="field-hint">When set, Generate saves passes here and the Passes tab loads from the server. Stable NFC: <code style="font-size:10px;">/v1/tap/current</code> → active pass.</div>
+    </div>
+
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;">
+      <button class="btn btn-xs btn-accent" onclick="fetchUsage()">Test connection</button>
+      <button class="btn btn-xs btn-danger" onclick="clearApiKey()">Clear key</button>
+      <button class="btn btn-xs" onclick="closeApiModal()" style="margin-left:auto;">Done</button>
+    </div>
+    <div id="keyTestMsg"></div>
+
+    <hr class="divider" style="margin:14px 0;" />
+
+    <div class="setting-row">
+      <div><div class="setting-label">Offline support</div><div class="setting-sub">Cached via service worker</div></div>
+      <span id="swStatus" class="badge badge-amber">Checking…</span>
+    </div>
+    <div class="setting-row" style="border-bottom:none;">
+      <div><div class="setting-label">WalletWallet docs</div><div class="setting-sub">walletwallet.dev/docs</div></div>
+      <a href="https://www.walletwallet.dev/docs/" target="_blank" class="btn btn-xs">Open →</a>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -847,6 +958,9 @@ let selectedPreset = 'dark';
 let fieldData = { header: [], primary: [], secondary: [], back: [] };
 let apiKey = '';
 let deferredInstallPrompt = null;
+let savedPasses = [];
+/** When set, passes are created & listed on this backend (API base URL). */
+let orchestratorUrl = '';
 
 const presetBg = {
   dark: '#1a3a28', blue: '#1a2850', green: '#1a3a20',
@@ -854,25 +968,41 @@ const presetBg = {
 };
 
 /* ─── Boot ─── */
+function defaultOrchestratorFromEnv() {
+  try {
+    const s = localStorage.getItem('pf_orch_url');
+    if (s != null) return s;
+  } catch (e) {}
+  if (typeof location !== 'undefined' && (location.protocol === 'https:' || location.protocol === 'http:') && location.host) {
+    return location.origin;
+  }
+  return 'https://digital-card-l5xv.onrender.com';
+}
+orchestratorUrl = defaultOrchestratorFromEnv();
+
 try { apiKey = localStorage.getItem('pf_api_key') || ''; } catch(e){}
+try { savedPasses = JSON.parse(localStorage.getItem('pf_passes') || '[]'); } catch(e){ savedPasses = []; }
+
 document.addEventListener('DOMContentLoaded', () => {
   const inp = document.getElementById('apiKeyInput');
   if (inp && apiKey) inp.value = apiKey;
-  updateKeyIndicator();
+  const orchInp = document.getElementById('orchestratorURL');
+  if (orchInp) orchInp.value = orchestratorUrl;
+  updateKeyPill();
   syncPreview();
 
-  // Check for ?tab= param
+  // SW status
+  const sw = document.getElementById('swStatus');
+  if ('serviceWorker' in navigator) {
+    sw.textContent = 'Active'; sw.className = 'badge badge-green';
+  } else {
+    sw.textContent = 'Unsupported'; sw.className = 'badge badge-red';
+  }
+
+  renderPassesList();
+
   const p = new URLSearchParams(location.search).get('tab');
   if (p) showScreen(p);
-
-  // SW status
-  if ('serviceWorker' in navigator) {
-    document.getElementById('swStatus').textContent = 'Active';
-    document.getElementById('swStatus').className = 'badge badge-green';
-  } else {
-    document.getElementById('swStatus').textContent = 'Unsupported';
-    document.getElementById('swStatus').className = 'badge badge-red';
-  }
 });
 
 /* ─── PWA install ─── */
@@ -902,37 +1032,61 @@ function showScreen(name) {
   const nav = document.getElementById('nav-' + name);
   if (nav) nav.classList.add('active');
   document.getElementById('appContent').scrollTo(0, 0);
+  if (name === 'passes') renderPassesList();
+}
+
+/* ─── API Modal ─── */
+function openApiModal() {
+  document.getElementById('apiModal').classList.add('open');
+}
+function closeApiModal() {
+  document.getElementById('apiModal').classList.remove('open');
+}
+function handleModalClick(e) {
+  if (e.target === document.getElementById('apiModal')) closeApiModal();
 }
 
 /* ─── API key ─── */
 function saveApiKey() {
   apiKey = document.getElementById('apiKeyInput').value.trim();
   try { localStorage.setItem('pf_api_key', apiKey); } catch(e) {}
-  updateKeyIndicator();
+  updateKeyPill();
+}
+function getOrchBase() {
+  const el = document.getElementById('orchestratorURL');
+  const t = (el && el.value.trim()) || (orchestratorUrl || '').trim();
+  return t.replace(/\/$/, '');
+}
+function saveOrchestratorUrl() {
+  const el = document.getElementById('orchestratorURL');
+  orchestratorUrl = el && el.value ? el.value.trim() : '';
+  try { localStorage.setItem('pf_orch_url', orchestratorUrl); } catch(e) {}
+  void renderPassesList();
+  updatePassesNavCount();
 }
 function clearApiKey() {
   apiKey = '';
   document.getElementById('apiKeyInput').value = '';
   try { localStorage.removeItem('pf_api_key'); } catch(e) {}
-  updateKeyIndicator();
-  addLog('API key cleared.', 'info');
+  updateKeyPill();
+  document.getElementById('keyTestMsg').innerHTML = '<div class="log-item info">API key cleared.</div>';
 }
 function toggleKeyVis() {
   const inp = document.getElementById('apiKeyInput');
   inp.type = inp.type === 'password' ? 'text' : 'password';
 }
-function updateKeyIndicator() {
-  const el = document.getElementById('keyIndicator');
-  const lbl = document.getElementById('keyIndicatorLabel');
+function updateKeyPill() {
+  const el = document.getElementById('keyPill');
+  const lbl = document.getElementById('keyPillLabel');
   if (apiKey && apiKey.startsWith('ww_live_') && apiKey.length >= 40) {
-    el.className = 'key-indicator ok';
+    el.className = 'key-pill ok';
     lbl.textContent = 'Key set';
   } else if (apiKey) {
-    el.className = 'key-indicator err';
+    el.className = 'key-pill err';
     lbl.textContent = 'Invalid';
   } else {
-    el.className = 'key-indicator';
-    lbl.textContent = 'No key';
+    el.className = 'key-pill';
+    lbl.textContent = 'API key';
   }
 }
 
@@ -964,6 +1118,27 @@ function getExpDays() {
   if (!v) return null;
   if (v === 'custom') return parseInt(document.getElementById('customExpDays').value) || null;
   return parseInt(v);
+}
+
+/** WalletWallet JSON for POST (shared by direct and orchestrator). */
+function buildPassPayload() {
+  const body = { barcodeValue: document.getElementById('barcodeValue').value.trim(), barcodeFormat: selectedFormat };
+  const lt = document.getElementById('logoText').value.trim();
+  if (lt) body.logoText = lt;
+  const desc = document.getElementById('description').value.trim();
+  if (desc) body.description = desc;
+  if (fieldData.primary.length) body.primaryFields = fieldData.primary.map(f=>({label:f.label,value:f.value}));
+  if (fieldData.secondary.length) body.secondaryFields = fieldData.secondary.map(f=>({label:f.label,value:f.value}));
+  if (fieldData.header.length) body.headerFields = fieldData.header.map(f=>({label:f.label,value:f.value}));
+  if (fieldData.back.length) body.backFields = fieldData.back.map(f=>({label:f.label,value:f.value}));
+  const cc = document.getElementById('customColor').value.trim();
+  if (cc) body.color = cc; else body.colorPreset = selectedPreset;
+  const exp = getExpDays();
+  if (exp) body.expirationDays = exp;
+  const lu = document.getElementById('logoURL').value.trim(); if (lu) body.logoURL = lu;
+  const tu = document.getElementById('thumbnailURL').value.trim(); if (tu) body.thumbnailURL = tu;
+  const su = document.getElementById('stripURL').value.trim(); if (su) body.stripURL = su;
+  return { body, lt, cc };
 }
 
 /* ─── Fields ─── */
@@ -1047,8 +1222,9 @@ function updateBackPreview() {
 }
 
 /* ─── Barcode drawing ─── */
-function drawBarcode(fmt) {
-  const svg = document.getElementById('barcodePreview');
+function drawBarcode(fmt, svgEl, size) {
+  const svg = svgEl || document.getElementById('barcodePreview');
+  const sz = size || 52;
   svg.innerHTML = '';
   const ns = 'http://www.w3.org/2000/svg';
   const mk = (tag,attrs) => {
@@ -1058,90 +1234,358 @@ function drawBarcode(fmt) {
   };
   if (fmt === 'QR') {
     svg.setAttribute('viewBox','0 0 7 7');
-    svg.setAttribute('width','56'); svg.setAttribute('height','56');
+    svg.setAttribute('width',sz); svg.setAttribute('height',sz);
     [[1,1,1,1,1,1,1],[1,0,0,0,0,0,1],[1,0,1,1,1,0,1],[1,0,1,0,1,0,1],[1,0,1,1,1,0,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1]]
     .forEach((row,r)=>row.forEach((c,col)=>{ if(c) svg.appendChild(mk('rect',{x:col,y:r,width:1,height:1,fill:'#111'})); }));
-    // center dots
     [[3,3],[4,3],[3,4],[4,4]].forEach(([x,y])=>svg.appendChild(mk('rect',{x,y,width:1,height:1,fill:'#111'})));
   } else if (fmt === 'Code128') {
-    svg.setAttribute('viewBox','0 0 60 18'); svg.setAttribute('width','56'); svg.setAttribute('height','21');
+    svg.setAttribute('viewBox','0 0 60 18'); svg.setAttribute('width',sz); svg.setAttribute('height',Math.round(sz*0.4));
     [2,1,3,1,2,2,1,4,1,2,3,1,2,1,4,1,1,2,3,1,2,1,3,2,1,1,2,1].reduce((x,w,i)=>{
       if(i%2===0) svg.appendChild(mk('rect',{x,y:0,width:w,height:18,fill:'#111'}));
       return x+w;
     },1);
   } else if (fmt === 'PDF417') {
-    svg.setAttribute('viewBox','0 0 60 30'); svg.setAttribute('width','56'); svg.setAttribute('height','28');
+    svg.setAttribute('viewBox','0 0 60 30'); svg.setAttribute('width',sz); svg.setAttribute('height',Math.round(sz*0.55));
     for(let r=0;r<4;r++){
       [2,3,1,4,2,5,1,2,3,1,4,2,1,3,2,4,1,2,3,1].reduce((x,w,i)=>{
         if(i%2===0) svg.appendChild(mk('rect',{x,y:r*7,width:w,height:5,fill:'#111'}));
         return x+w;
       },1);
     }
-  } else { // Aztec
-    svg.setAttribute('viewBox','0 0 7 7'); svg.setAttribute('width','56'); svg.setAttribute('height','56');
+  } else {
+    svg.setAttribute('viewBox','0 0 7 7'); svg.setAttribute('width',sz); svg.setAttribute('height',sz);
     [[1,2],[1,3],[1,4],[2,1],[3,1],[4,1],[5,2],[5,3],[5,4],[2,5],[3,5],[4,5],[3,3]].forEach(([x,y])=>
       svg.appendChild(mk('rect',{x,y,width:1,height:1,fill:'#111'})));
     svg.appendChild(mk('rect',{x:2,y:2,width:3,height:3,rx:0.3,fill:'none',stroke:'#111','stroke-width':0.5}));
   }
 }
 
+/* ─── Saved Passes ─── */
+function persistPasses() {
+  try { localStorage.setItem('pf_passes', JSON.stringify(savedPasses)); } catch(e){}
+}
+
+function savePassRecord(logoText, primaryLabel, primaryVal, bgColor, format) {
+  const record = {
+    id: Date.now(),
+    created: new Date().toISOString(),
+    logoText: logoText || 'Pass',
+    primaryLabel: primaryLabel || '',
+    primaryValue: primaryVal || '',
+    bgColor: bgColor,
+    format: format,
+  };
+  savedPasses.unshift(record);
+  if (savedPasses.length > 50) savedPasses = savedPasses.slice(0, 50);
+  persistPasses();
+  updatePassesNavCount();
+}
+
+function updatePassesNavCount() {
+  if (getOrchBase()) {
+    return;
+  }
+  const el = document.getElementById('passesNavCount');
+  if (savedPasses.length > 0) {
+    el.textContent = savedPasses.length > 99 ? '99+' : savedPasses.length;
+    el.classList.add('show');
+  } else {
+    el.classList.remove('show');
+  }
+}
+
+function deletePass(id) {
+  savedPasses = savedPasses.filter(p => p.id !== id);
+  persistPasses();
+  renderPassesList();
+  updatePassesNavCount();
+}
+
+function clearAllPasses() {
+  if (getOrchBase()) {
+    if (!confirm('This only removes locally cached entries from this device. Passes on the server are not deleted.')) return;
+  } else {
+    if (!confirm('Delete all saved pass records?')) return;
+  }
+  savedPasses = [];
+  persistPasses();
+  renderPassesList();
+  updatePassesNavCount();
+}
+
+function copyToClipboard(str) {
+  if (!str) return;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(str).then(() => addLog('Copied to clipboard.', 'ok'), () => addLog('Copy failed', 'err'));
+  } else {
+    addLog('Clipboard not available', 'err');
+  }
+}
+
+async function setServerActive(id) {
+  const orch = getOrchBase();
+  if (!orch) return;
+  try {
+    const r = await fetch(orch + '/api/settings/active-pass', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ active_pass_id: id || null })
+    });
+    if (r.ok) {
+      addLog('Active pass updated. Your NFC /v1/tap/current link will use this pass.', 'ok');
+      void renderPassesList();
+    } else {
+      const j = await r.json().catch(() => ({}));
+      addLog('Could not set active: ' + (j.detail || r.status), 'err');
+    }
+  } catch (e) {
+    addLog('Network error: ' + e.message, 'err');
+  }
+}
+
+async function renderPassesList() {
+  const container = document.getElementById('passesList');
+  if (!container) return;
+  const clearBtn = document.getElementById('clearAllBtn');
+  const navCount = document.getElementById('passesNavCount');
+  const orch = getOrchBase();
+
+  if (orch) {
+    if (clearBtn) clearBtn.style.display = 'none';
+    container.innerHTML = '<div class="field-hint" style="text-align:center;padding:12px;">Loading…</div>';
+    try {
+      const [rPass, rSet] = await Promise.all([
+        fetch(orch + '/api/passes'),
+        fetch(orch + '/api/settings')
+      ]);
+      if (!rPass.ok) {
+        const err = await rPass.json().catch(() => ({}));
+        const d = err.detail;
+        const msg = typeof d === 'string' ? d : (Array.isArray(d) ? d.map((x) => (x && x.msg) || x).join(', ') : (rPass.status + ''));
+        container.innerHTML = `<div class="passes-empty"><h3>Couldn’t load passes</h3><p>${esc(String(msg))}. Check Pass server URL and CORS on the server (CORS_ORIGINS).</p></div>`;
+        return;
+      }
+      const list = await rPass.json();
+      const settings = rSet.ok ? await rSet.json() : {};
+      const activeId = settings.active_pass_id || null;
+      if (list.length) {
+        navCount.textContent = list.length > 99 ? '99+' : String(list.length);
+        navCount.classList.add('show');
+      } else {
+        navCount.classList.remove('show');
+      }
+
+      const nfcUrl = orch + '/v1/tap/current';
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="passes-nfc-bar"><strong>Stable NFC URL (program once)</strong><code>${esc(nfcUrl)}</code>
+          <button type="button" class="btn btn-xs btn-accent" onclick="copyToClipboard(getOrchBase() + '/v1/tap/current')">Copy</button>
+          <p style="margin-top:6px;opacity:0.85">Set an active pass below after you generate. Requires server env <code style="font-size:9px">MONGODB_URI</code>.</p></div>
+          <div class="passes-empty">
+            <div class="passes-empty-icon">🎫</div>
+            <h3>No server passes</h3>
+            <p>Build a pass, then <strong>Generate</strong> — the orchestrator will store it and list it here.</p>
+          </div>`;
+        return;
+      }
+
+      const frag = document.createElement('div');
+      frag.appendChild((() => {
+        const bar = document.createElement('div');
+        bar.className = 'passes-nfc-bar';
+        const isActive = !!activeId;
+        bar.innerHTML = `<strong>Stable NFC (one URL for your tag)</strong> — always points at the <em>active</em> pass below.
+<code>${esc(nfcUrl)}</code>
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:2px;align-items:center;">
+<button type="button" class="btn btn-xs btn-accent" onclick="copyToClipboard(getOrchBase() + '/v1/tap/current')">Copy URL</button>
+${isActive ? '<span class="badge badge-active">Active pass is set</span>' : '<span class="badge badge-amber" style="background:var(--amber-bg);color:var(--amber)">Set an active pass in the list</span>'}
+</div>`;
+        return bar;
+      })());
+
+      const listEl = document.createElement('div');
+      listEl.className = 'saved-pass-list';
+      for (const pass of list) {
+        const isActive = activeId && pass.id === activeId;
+        const card = document.createElement('div');
+        card.className = 'saved-pass-card';
+        const label = pass.label || pass.id.slice(-8);
+        const dateStr = (pass.created_at && (new Date(pass.created_at).toString() !== 'Invalid Date')) ? new Date(pass.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+        const bg = presetBg.dark;
+        card.innerHTML = `
+      <div class="saved-pass-preview" style="background:linear-gradient(135deg, ${bg} 0%, #0d1811 100%);">
+        <div>
+          <div class="saved-pass-logo">${esc(label)}</div>
+          <div style="font-size:9px;opacity:0.6;font-weight:500;margin-top:4px;font-family:var(--mono)">${esc(pass.id)}</div>
+        </div>
+      </div>
+      <div class="saved-pass-meta">
+        <div class="saved-pass-info">
+          <div class="saved-pass-name">${isActive ? '<span class="badge badge-active" style="margin-right:4px">Active</span>' : ''}${esc(label)}</div>
+          <div class="saved-pass-date">${esc(dateStr)}</div>
+        </div>
+        <div class="saved-pass-actions" style="flex-wrap:wrap;justify-content:flex-end">
+          <button class="btn btn-xs btn-accent" type="button" data-act="${esc(pass.id)}">Set active</button>
+        </div>
+      </div>`;
+        const btn = card.querySelector('button[data-act]');
+        if (btn) btn.addEventListener('click', () => setServerActive(pass.id));
+        listEl.appendChild(card);
+      }
+      frag.appendChild(listEl);
+      container.innerHTML = '';
+      container.appendChild(frag);
+    } catch (e) {
+      container.innerHTML = `<div class="passes-empty"><h3>Error</h3><p>${esc(e.message || String(e))}</p></div>`;
+    }
+    return;
+  }
+
+  updatePassesNavCount();
+
+  if (savedPasses.length === 0) {
+    if (clearBtn) clearBtn.style.display = 'none';
+    container.innerHTML = `
+      <div class="passes-empty">
+        <div class="passes-empty-icon">🎫</div>
+        <h3>No passes yet</h3>
+        <p>Passes you generate will appear here so you can keep track of what you've created. Or set a <strong>Pass server</strong> in API settings to sync to your backend.</p>
+      </div>`;
+    return;
+  }
+
+  if (clearBtn) clearBtn.style.display = '';
+
+  container.innerHTML = '';
+  const list = document.createElement('div');
+  list.className = 'saved-pass-list';
+
+  savedPasses.forEach(pass => {
+    const card = document.createElement('div');
+    card.className = 'saved-pass-card';
+
+    const date = new Date(pass.created).toLocaleDateString('en-US', {
+      month: 'short', day: 'numeric', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
+
+    card.innerHTML = `
+      <div class="saved-pass-preview" style="background:${pass.bgColor || '#1a3a28'};">
+        <div>
+          <div class="saved-pass-logo">${esc(pass.logoText)}</div>
+          ${pass.primaryValue ? `<div class="saved-pass-primary">${esc(pass.primaryValue)}</div>` : ''}
+        </div>
+        <div class="saved-pass-barcode-mini" id="minibc-${pass.id}"></div>
+      </div>
+      <div class="saved-pass-meta">
+        <div class="saved-pass-info">
+          <div class="saved-pass-name">${esc(pass.primaryLabel || pass.logoText)}</div>
+          <div class="saved-pass-date">${date}</div>
+        </div>
+        <div class="saved-pass-actions">
+          <span class="badge badge-dim" style="margin-right:4px;">${pass.format || 'QR'}</span>
+          <button class="btn btn-xs btn-danger" onclick="deletePass(${pass.id})">Delete</button>
+        </div>
+      </div>`;
+
+    list.appendChild(card);
+  });
+
+  container.appendChild(list);
+
+  savedPasses.forEach(pass => {
+    const wrap = document.getElementById('minibc-' + pass.id);
+    if (!wrap) return;
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    wrap.appendChild(svg);
+    drawBarcode(pass.format || 'QR', svg, 24);
+  });
+}
+
 /* ─── Generate pass ─── */
 async function generatePass() {
-  const key = document.getElementById('apiKeyInput').value.trim() || apiKey;
-  if (!key || !key.startsWith('ww_live_')) {
-    addLog('Set a valid API key in Settings first.', 'err'); return;
-  }
   const bv = document.getElementById('barcodeValue').value.trim();
   if (!bv) { addLog('Barcode value is required.', 'err'); return; }
+
+  const { body, lt, cc } = buildPassPayload();
+  const base = document.getElementById('baseURL').value.trim() || 'https://api.walletwallet.dev';
+  const orch = getOrchBase();
 
   const btn = document.getElementById('generateBtn');
   const lbl = document.getElementById('generateLabel');
   btn.disabled = true;
   lbl.innerHTML = '<div class="spinner"></div> Generating…';
 
-  const body = { barcodeValue: bv, barcodeFormat: selectedFormat };
-  const lt = document.getElementById('logoText').value.trim();
-  if (lt) body.logoText = lt;
-  const desc = document.getElementById('description').value.trim();
-  if (desc) body.description = desc;
-  if (fieldData.primary.length) body.primaryFields = fieldData.primary.map(f=>({label:f.label,value:f.value}));
-  if (fieldData.secondary.length) body.secondaryFields = fieldData.secondary.map(f=>({label:f.label,value:f.value}));
-  if (fieldData.header.length) body.headerFields = fieldData.header.map(f=>({label:f.label,value:f.value}));
-  if (fieldData.back.length) body.backFields = fieldData.back.map(f=>({label:f.label,value:f.value}));
-  const cc = document.getElementById('customColor').value.trim();
-  if (cc) body.color = cc; else body.colorPreset = selectedPreset;
-  const exp = getExpDays();
-  if (exp) body.expirationDays = exp;
-  const lu = document.getElementById('logoURL').value.trim(); if (lu) body.logoURL = lu;
-  const tu = document.getElementById('thumbnailURL').value.trim(); if (tu) body.thumbnailURL = tu;
-  const su = document.getElementById('stripURL').value.trim(); if (su) body.stripURL = su;
-  const base = document.getElementById('baseURL').value.trim() || 'https://api.walletwallet.dev';
-
   try {
-    const resp = await fetch(base + '/api/pkpass', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
-      body: JSON.stringify(body)
-    });
-    if (resp.ok) {
-      const blob = await resp.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = (lt || 'pass').toLowerCase().replace(/\s+/g,'-') + '.pkpass';
-      document.body.appendChild(a); a.click(); document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      addLog('Pass generated and downloaded successfully.', 'ok');
+    if (orch) {
+      const serverPost = { ...body };
+      serverPost.label = lt || 'Pass';
+      const post = await fetch(orch + '/api/passes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(serverPost)
+      });
+      if (!post.ok) {
+        const j = await post.json().catch(()=>({}));
+        const d = j.detail;
+        const msg = typeof d === 'string' ? d : (post.status + (j.error ? ' ' + j.error : ''));
+        addLog('Orchestrator: ' + (msg || 'request failed'), 'err');
+        btn.disabled = false; lbl.textContent = 'Generate .pkpass';
+        return;
+      }
+      const meta = await post.json();
+      const dl = await fetch(orch + '/api/passes/' + meta.id + '/pkpass');
+      if (!dl.ok) {
+        addLog('Pass created but download failed: ' + dl.status, 'err');
+        addLog('You can still set it active from the Passes tab if listed.', 'info');
+      } else {
+        const blob = await dl.blob();
+        const burl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = burl;
+        a.download = (lt || 'pass').toLowerCase().replace(/\s+/g,'-') + '.pkpass';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        URL.revokeObjectURL(burl);
+        addLog('Pass saved on server and downloaded.', 'ok');
+      }
+      void renderPassesList();
     } else {
-      const err = await resp.json().catch(()=>({error:'Unknown error'}));
-      if (resp.status === 429) addLog(`Rate limit exceeded. Resets ${err.resetDate||'soon'}.`, 'err');
-      else addLog(`Error ${resp.status}: ${err.error || 'Request failed'}`, 'err');
+      const key = document.getElementById('apiKeyInput').value.trim() || apiKey;
+      if (!key || !key.startsWith('ww_live_')) {
+        addLog('Set a valid WalletWallet API key (or configure Pass server) — tap the key in the header.', 'err');
+        btn.disabled = false; lbl.textContent = 'Generate .pkpass';
+        return;
+      }
+      const resp = await fetch(base + '/api/pkpass', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+        body: JSON.stringify(body)
+      });
+      if (resp.ok) {
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = (lt || 'pass').toLowerCase().replace(/\s+/g,'-') + '.pkpass';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        addLog('Pass generated and downloaded successfully.', 'ok');
+        const bgColor = (cc && /^#[0-9a-fA-F]{6}$/.test(cc)) ? cc : (presetBg[selectedPreset] || '#1a3a28');
+        const prim = fieldData.primary[0];
+        savePassRecord(lt, prim?.label, prim?.value, bgColor, selectedFormat);
+      } else {
+        const err = await resp.json().catch(()=>({error:'Unknown error'}));
+        if (resp.status === 429) addLog(`Rate limit exceeded. Resets ${err.resetDate||'soon'}.`, 'err');
+        else addLog(`Error ${resp.status}: ${err.error || err.detail || 'Request failed'}`, 'err');
+      }
     }
-  } catch(e) { addLog('Network error: ' + e.message, 'err'); }
+  } catch (e) {
+    addLog('Network error: ' + e.message, 'err');
+  }
   btn.disabled = false; lbl.textContent = 'Generate .pkpass';
 }
 
-/* ─── API test (usage endpoint) ─── */
+/* ─── API test ─── */
 async function fetchUsage() {
   const key = document.getElementById('apiKeyInput').value.trim() || apiKey;
   const base = document.getElementById('baseURL').value.trim() || 'https://api.walletwallet.dev';
@@ -1155,16 +1599,15 @@ async function fetchUsage() {
     const data = await resp.json();
     if (resp.ok) {
       const plan = data.plan.charAt(0).toUpperCase() + data.plan.slice(1);
-      const used = data.count.toLocaleString();
-      const rem = data.remaining.toLocaleString();
       if (msg) {
-        msg.innerHTML = '<div class="log-item ok">Connection successful. ' + plan + ' plan — ' + used + ' / ' + data.limit.toLocaleString() + ' used; ' + rem + ' left (resets ' + data.resetDate + ').</div>';
+        msg.innerHTML = `<div class="log-item ok">✓ ${plan} plan — ${data.count.toLocaleString()} / ${data.limit.toLocaleString()} used; ${data.remaining.toLocaleString()} remaining. Resets ${data.resetDate}.</div>`;
       }
+      updateKeyPill();
     } else {
-      if (msg) msg.innerHTML = '<div class="log-item err">Error ' + resp.status + ': ' + (data.error || '') + '</div>';
+      if (msg) msg.innerHTML = `<div class="log-item err">Error ${resp.status}: ${data.error || ''}</div>`;
     }
   } catch (e) {
-    if (msg) msg.innerHTML = '<div class="log-item err">Network error: ' + e.message + '</div>';
+    if (msg) msg.innerHTML = `<div class="log-item err">Network error: ${e.message}</div>`;
   }
 }
 
@@ -1176,107 +1619,23 @@ function addLog(msg, type) {
   const ts = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   div.textContent = `[${ts}] ${msg}`;
   list.insertBefore(div, list.firstChild);
-  while (list.children.length > 6) list.removeChild(list.lastChild);
+  while (list.children.length > 5) list.removeChild(list.lastChild);
 }
 
 /* ─── Templates ─── */
 const TEMPLATES = {
-
-  /* ── Networking ── */
-  biz_card: { logoText:'Your Company', barcodeValue:'https://linkedin.com/in/yourname', preset:'dark', exp:365,
-    header:[{label:'ROLE',value:'VP Sales'}], primary:[{label:'NAME',value:'Your Name'}],
-    secondary:[{label:'COMPANY',value:'Acme Corp'},{label:'PHONE',value:'+91 98765 43210'}],
-    back:[{label:'Email',value:'you@acme.com'},{label:'LinkedIn',value:'linkedin.com/in/yourname'},{label:'Website',value:'acme.com'}] },
-
-  founder: { logoText:'Your Startup', barcodeValue:'https://yourstartup.com/deck', preset:'purple', exp:365,
-    header:[{label:'STAGE',value:'Seed'}], primary:[{label:'FOUNDER',value:'Your Name'}],
-    secondary:[{label:'COMPANY',value:'StartupName'},{label:'FOCUS',value:'AI / SaaS'}],
-    back:[{label:'Pitch deck',value:'yourstartup.com/deck'},{label:'Calendly',value:'cal.com/yourname'},{label:'Tagline',value:'One line about what you do'}] },
-
-  freelancer: { logoText:'Your Studio', barcodeValue:'https://yourportfolio.com', preset:'green', exp:90,
-    header:[{label:'RATE',value:'₹8k/day'}], primary:[{label:'NAME',value:'Your Name'}],
-    secondary:[{label:'SKILL',value:'Brand Design'},{label:'AVAIL',value:'From June'}],
-    back:[{label:'Portfolio',value:'yourportfolio.com'},{label:'Email',value:'hello@studio.com'},{label:'Behance',value:'behance.net/you'}] },
-
-  speaker: { logoText:'Your Name', barcodeValue:'https://yoursite.com/speak', preset:'dark', exp:365,
-    header:[{label:'TOPIC',value:'Future of Work'}], primary:[{label:'SPEAKER',value:'Your Name'}],
-    secondary:[{label:'TALKS',value:'40+ globally'},{label:'NEWSLETTER',value:'42k readers'}],
-    back:[{label:'Book me',value:'yoursite.com/speak'},{label:'Substack',value:'yourname.substack.com'},{label:'Bio',value:'Keynote speaker on leadership and the future of work.'}] },
-
-  job_seeker: { logoText:'Your Name', barcodeValue:'https://yourname.dev/resume', preset:'blue', exp:90,
-    header:[{label:'OPEN TO',value:'Product roles'}], primary:[{label:'NAME',value:'Your Name'}],
-    secondary:[{label:'EXP',value:'6 yrs · B2B SaaS'},{label:'LOCATION',value:'Remote / Hyderabad'}],
-    back:[{label:'Resume',value:'yourname.dev/resume'},{label:'GitHub',value:'github.com/yourname'},{label:'LinkedIn',value:'linkedin.com/in/yourname'}] },
-
-  conf_badge: { logoText:'PyCon 2026', barcodeValue:'CONF-BADGE-001', preset:'purple', exp:30,
-    header:[{label:'TRACK',value:'AI / ML'}], primary:[{label:'NAME',value:'Your Name'}],
-    secondary:[{label:'COMPANY',value:'Acme Corp'},{label:'TIER',value:'Speaker'}],
-    back:[{label:'Schedule',value:'pycon2026.com/schedule'},{label:'Slack',value:'#pycon-networking'},{label:'Contact',value:'you@acme.com'}] },
-
-  /* ── Sales ── */
-  sales_intro: { logoText:'Your Company', barcodeValue:'https://yourco.com/demo', preset:'blue', exp:90,
-    header:[{label:'TERRITORY',value:'APAC'}], primary:[{label:'AE',value:'Your Name'}],
-    secondary:[{label:'COMPANY',value:'Your Co'},{label:'SEGMENT',value:'Enterprise'}],
-    back:[{label:'Book a demo',value:'yourco.com/demo'},{label:'Phone',value:'+91 98765 43210'},{label:'Email',value:'you@yourco.com'},{label:'Case study',value:'yourco.com/cases'}] },
-
-  demo_invite: { logoText:'YourCo Demo', barcodeValue:'https://yourco.com/demo/session', preset:'purple', exp:30,
-    header:[{label:'SLOT',value:'May 5, 2:00 PM'}], primary:[{label:'DEMO',value:'Product Tour'}],
-    secondary:[{label:'HOST',value:'Sales Team'},{label:'DURATION',value:'30 min'}],
-    back:[{label:'Join link',value:'yourco.com/demo/session'},{label:'Prep guide',value:'yourco.com/prep'},{label:'Contact',value:'sales@yourco.com'}] },
-
-  proposal: { logoText:'Your Company', barcodeValue:'https://yourco.com/proposal/xyz', preset:'dark', exp:30,
-    header:[{label:'VALUE',value:'$48,000'}], primary:[{label:'PROPOSAL',value:'Enterprise Plan'}],
-    secondary:[{label:'VALID UNTIL',value:'May 31'},{label:'TIER',value:'Enterprise'}],
-    back:[{label:'View proposal',value:'yourco.com/proposal/xyz'},{label:'AE',value:'Your Name'},{label:'Phone',value:'+91 98765 43210'},{label:'Book a call',value:'cal.com/yourname'}] },
-
-  partner: { logoText:'Partner Program', barcodeValue:'https://yourco.com/partners', preset:'green', exp:365,
-    header:[{label:'TIER',value:'Gold Partner'}], primary:[{label:'PARTNER',value:'Company Name'}],
-    secondary:[{label:'MARGIN',value:'25%'},{label:'REGION',value:'APAC'}],
-    back:[{label:'Partner portal',value:'yourco.com/partners'},{label:'Support',value:'partners@yourco.com'},{label:'Co-sell contact',value:'+91 98765 43210'}] },
-
-  referral: { logoText:'Your Company', barcodeValue:'REF-YOURCODE', preset:'orange', exp:90,
-    header:[{label:'REWARD',value:'$500 credit'}], primary:[{label:'REFERRAL',value:'Your Name'}],
-    secondary:[{label:'CODE',value:'REF-YOURCODE'},{label:'EXPIRES',value:'Jul 2026'}],
-    back:[{label:'How it works',value:'Share your code. Earn $500 per closed deal.'},{label:'T&Cs',value:'yourco.com/referral/terms'}] },
-
-  prospect: { logoText:'Your Company', barcodeValue:'https://yourco.com/next-steps', preset:'blue', exp:30,
-    header:[{label:'NEXT STEP',value:'Discovery call'}], primary:[{label:'FOR',value:'Prospect Name'}],
-    secondary:[{label:'AE',value:'Your Name'},{label:'DATE',value:'May 10, 11 AM'}],
-    back:[{label:'Join link',value:'yourco.com/next-steps'},{label:'AE phone',value:'+91 98765 43210'},{label:'One-pager',value:'yourco.com/overview'}] },
-
-  /* ── General ── */
-  loyalty: { logoText:'Bayroast Coffee', barcodeValue:'LOYALTY-98765', preset:'green', exp:365,
-    header:[{label:'BALANCE',value:'$25.00'}], primary:[{label:'CARD',value:'Coffee Rewards'}],
-    secondary:[{label:'TIER',value:'Gold Status'},{label:'VISITS',value:'47'}],
-    back:[{label:'Terms',value:'Valid at all locations. Non-transferable.'}] },
-  ticket: { logoText:'Summer Fest 2026', barcodeValue:'TICKET-A23', preset:'purple', exp:1,
-    header:[{label:'GATE',value:'B'}], primary:[{label:'EVENT',value:'Concert Night'}],
-    secondary:[{label:'SEAT',value:'A-23'},{label:'DATE',value:'Jun 21'}],
-    back:[{label:'Venue',value:'Central Arena'},{label:'Time',value:'8:00 PM'}] },
-  coupon: { logoText:'Flash Sale', barcodeValue:'COUPON-50OFF', preset:'red', exp:30,
-    header:[{label:'CODE',value:'SAVE50'}], primary:[{label:'OFFER',value:'50% Off'}],
-    secondary:[{label:'MIN ORDER',value:'$30'},{label:'CATEGORY',value:'All items'}],
-    back:[{label:'Terms',value:'One use per customer. Cannot combine offers.'}] },
-  membership: { logoText:'PowerHouse Gym', barcodeValue:'MEMBER-001', preset:'dark', exp:365,
-    header:[], primary:[{label:'MEMBER',value:'Premium'}],
-    secondary:[{label:'NAME',value:'Your Name'},{label:'VALID',value:'Dec 2026'}],
-    back:[{label:'Emergency',value:'555-0100'},{label:'Location',value:'42 Fitness Blvd'}] },
-  boarding: { logoText:'SkyAir', barcodeValue:'BOARD-AA1234', preset:'blue', exp:1,
-    header:[{label:'SEAT',value:'12A'}], primary:[{label:'FLIGHT',value:'AA 1234'}],
-    secondary:[{label:'FROM',value:'HYD'},{label:'TO',value:'BOM'}],
-    back:[{label:'Gate',value:'B22'},{label:'Boarding',value:'10:30 AM'},{label:'Class',value:'Economy'}] },
-  order: { logoText:'QuickBite', barcodeValue:'ORDER-456', preset:'orange', exp:1,
-    header:[{label:'ETA',value:'5 min'}], primary:[{label:'ORDER',value:'Ready!'}],
-    secondary:[{label:'ORDER #',value:'#456'},{label:'ITEMS',value:'3'}],
-    back:[{label:'Counter',value:'3 — Main St branch'}] },
-  gift: { logoText:'StyleStore', barcodeValue:'GIFT-XK99', preset:'dark', exp:365,
-    header:[{label:'BALANCE',value:'$50.00'}], primary:[{label:'GIFT CARD',value:'Store Credit'}],
-    secondary:[{label:'VALID',value:'2027'},{label:'ID',value:'XK99'}],
-    back:[{label:'How to use',value:'Present at checkout. Non-refundable.'}] },
-  access: { logoText:'VIP Access', barcodeValue:'VIP-001', preset:'purple', exp:90,
-    header:[{label:'LEVEL',value:'VIP'}], primary:[{label:'ACCESS',value:'All Areas'}],
-    secondary:[{label:'NAME',value:'Guest'},{label:'ISSUED',value:'Apr 2026'}],
-    back:[{label:'Support',value:'vip@event.com'}] },
+  biz_card: { logoText:'Your Company', barcodeValue:'https://linkedin.com/in/yourname', preset:'dark', exp:365, header:[{label:'ROLE',value:'VP Sales'}], primary:[{label:'NAME',value:'Your Name'}], secondary:[{label:'COMPANY',value:'Acme Corp'},{label:'PHONE',value:'+91 98765 43210'}], back:[{label:'Email',value:'you@acme.com'},{label:'LinkedIn',value:'linkedin.com/in/yourname'},{label:'Website',value:'acme.com'}] },
+  founder: { logoText:'Your Startup', barcodeValue:'https://yourstartup.com/deck', preset:'purple', exp:365, header:[{label:'STAGE',value:'Seed'}], primary:[{label:'FOUNDER',value:'Your Name'}], secondary:[{label:'COMPANY',value:'StartupName'},{label:'FOCUS',value:'AI / SaaS'}], back:[{label:'Pitch deck',value:'yourstartup.com/deck'},{label:'Calendly',value:'cal.com/yourname'},{label:'Tagline',value:'One line about what you do'}] },
+  freelancer: { logoText:'Your Studio', barcodeValue:'https://yourportfolio.com', preset:'green', exp:90, header:[{label:'RATE',value:'₹8k/day'}], primary:[{label:'NAME',value:'Your Name'}], secondary:[{label:'SKILL',value:'Brand Design'},{label:'AVAIL',value:'From June'}], back:[{label:'Portfolio',value:'yourportfolio.com'},{label:'Email',value:'hello@studio.com'},{label:'Behance',value:'behance.net/you'}] },
+  speaker: { logoText:'Your Name', barcodeValue:'https://yoursite.com/speak', preset:'dark', exp:365, header:[{label:'TOPIC',value:'Future of Work'}], primary:[{label:'SPEAKER',value:'Your Name'}], secondary:[{label:'TALKS',value:'40+ globally'},{label:'NEWSLETTER',value:'42k readers'}], back:[{label:'Book me',value:'yoursite.com/speak'},{label:'Substack',value:'yourname.substack.com'},{label:'Bio',value:'Keynote speaker on leadership and the future of work.'}] },
+  job_seeker: { logoText:'Your Name', barcodeValue:'https://yourname.dev/resume', preset:'blue', exp:90, header:[{label:'OPEN TO',value:'Product roles'}], primary:[{label:'NAME',value:'Your Name'}], secondary:[{label:'EXP',value:'6 yrs · B2B SaaS'},{label:'LOCATION',value:'Remote / Hyderabad'}], back:[{label:'Resume',value:'yourname.dev/resume'},{label:'GitHub',value:'github.com/yourname'},{label:'LinkedIn',value:'linkedin.com/in/yourname'}] },
+  conf_badge: { logoText:'PyCon 2026', barcodeValue:'CONF-BADGE-001', preset:'purple', exp:30, header:[{label:'TRACK',value:'AI / ML'}], primary:[{label:'NAME',value:'Your Name'}], secondary:[{label:'COMPANY',value:'Acme Corp'},{label:'TIER',value:'Speaker'}], back:[{label:'Schedule',value:'pycon2026.com/schedule'},{label:'Slack',value:'#pycon-networking'},{label:'Contact',value:'you@acme.com'}] },
+  sales_intro: { logoText:'Your Company', barcodeValue:'https://yourco.com/demo', preset:'blue', exp:90, header:[{label:'TERRITORY',value:'APAC'}], primary:[{label:'AE',value:'Your Name'}], secondary:[{label:'COMPANY',value:'Your Co'},{label:'SEGMENT',value:'Enterprise'}], back:[{label:'Book a demo',value:'yourco.com/demo'},{label:'Phone',value:'+91 98765 43210'},{label:'Email',value:'you@yourco.com'},{label:'Case study',value:'yourco.com/cases'}] },
+  demo_invite: { logoText:'YourCo Demo', barcodeValue:'https://yourco.com/demo/session', preset:'purple', exp:30, header:[{label:'SLOT',value:'May 5, 2:00 PM'}], primary:[{label:'DEMO',value:'Product Tour'}], secondary:[{label:'HOST',value:'Sales Team'},{label:'DURATION',value:'30 min'}], back:[{label:'Join link',value:'yourco.com/demo/session'},{label:'Prep guide',value:'yourco.com/prep'},{label:'Contact',value:'sales@yourco.com'}] },
+  proposal: { logoText:'Your Company', barcodeValue:'https://yourco.com/proposal/xyz', preset:'dark', exp:30, header:[{label:'VALUE',value:'$48,000'}], primary:[{label:'PROPOSAL',value:'Enterprise Plan'}], secondary:[{label:'VALID UNTIL',value:'May 31'},{label:'TIER',value:'Enterprise'}], back:[{label:'View proposal',value:'yourco.com/proposal/xyz'},{label:'AE',value:'Your Name'},{label:'Phone',value:'+91 98765 43210'},{label:'Book a call',value:'cal.com/yourname'}] },
+  partner: { logoText:'Partner Program', barcodeValue:'https://yourco.com/partners', preset:'green', exp:365, header:[{label:'TIER',value:'Gold Partner'}], primary:[{label:'PARTNER',value:'Company Name'}], secondary:[{label:'MARGIN',value:'25%'},{label:'REGION',value:'APAC'}], back:[{label:'Partner portal',value:'yourco.com/partners'},{label:'Support',value:'partners@yourco.com'},{label:'Co-sell contact',value:'+91 98765 43210'}] },
+  referral: { logoText:'Your Company', barcodeValue:'REF-YOURCODE', preset:'orange', exp:90, header:[{label:'REWARD',value:'$500 credit'}], primary:[{label:'REFERRAL',value:'Your Name'}], secondary:[{label:'CODE',value:'REF-YOURCODE'},{label:'EXPIRES',value:'Jul 2026'}], back:[{label:'How it works',value:'Share your code. Earn $500 per closed deal.'},{label:'T&Cs',value:'yourco.com/referral/terms'}] },
+  prospect: { logoText:'Your Company', barcodeValue:'https://yourco.com/next-steps', preset:'blue', exp:30, header:[{label:'NEXT STEP',value:'Discovery call'}], primary:[{label:'FOR',value:'Prospect Name'}], secondary:[{label:'AE',value:'Your Name'},{label:'DATE',value:'May 10, 11 AM'}], back:[{label:'Join link',value:'yourco.com/next-steps'},{label:'AE phone',value:'+91 98765 43210'},{label:'One-pager',value:'yourco.com/overview'}] },
 };
 
 function loadTemplate(key) {
@@ -1302,15 +1661,16 @@ function loadTemplate(key) {
   showScreen('builder');
 }
 
-/* ─── Service Worker registration ─── */
+/* ─── Init ─── */
+updatePassesNavCount();
+syncPreview();
+
+/* ─── Service Worker ─── */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   });
 }
-
-/* ─── Init ─── */
-syncPreview();
 </script>
 </body>
 </html>

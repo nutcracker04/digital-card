@@ -7,14 +7,18 @@ services:
     buildCommand: pip install --upgrade pip && pip install .
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /healthz
+    # Same service: API ( /api, /v1, /healthz ) + PWA static files ( /, manifest, sw.js ) from repo frontend/
     envVars:
       - key: PYTHON_VERSION
         value: "3.13.13"
       # Set in the Render dashboard (do not commit secrets):
       #   WALLETWALLET_API_KEY — required
-      #   MONGODB_URI — optional; required for /api/passes and /v1/tap/{24_hex_objectid}
+      #   MONGODB_URI — required for server passes, /v1/tap/current, and settings
       #   MONGO_DB_NAME — optional (default: digital_card)
+      #   CORS_ORIGINS — e.g. * or https://your-pwa.netlify.app (PWA and API on different hosts)
       - key: WALLETWALLET_API_KEY
         sync: false
       - key: MONGODB_URI
         sync: false
+      - key: CORS_ORIGINS
+        value: "*"

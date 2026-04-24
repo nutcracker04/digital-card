@@ -8,6 +8,7 @@ from typing import Any
 
 from bson import Binary, ObjectId
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import Response
 from pydantic import BaseModel
 
 from app.db_mongo import passes_collection
@@ -102,3 +103,26 @@ def list_passes() -> list[PassListItem]:
     for doc in col.find({}, {"pkpass": 0, "request_json": 0}).sort("created_at", -1):
         out.append(_serialize_doc(doc))
     return out
+
+
+@router.get(
+    "/passes/{pass_id}/pkpass",
+    response_class=Response,
+    responses={200: {"content": {"application/vnd.apple.pkpass": {}}}},
+)
+def download_pkpass(pass_id: str) -> Response:
+    """Return stored .pkpass bytes (for browser / PWA download; not iOS-UA specific)."""
+    t = pass_id.strip()
+    if len(t) != 24 or not ObjectId.is_valid(t):
+        raise HTTPException(status_code=400, detail="Invalid pass id")
+    col = _col_or_503()
+    doc = col.find_one({"_id": ObjectId(t)})
+    if not doc or "pkpass" not in doc:
+        raise HTTPException(status_code=404, detail="Pass not found")
+    raw = doc["pkpass"]
+    blob: bytes = raw if isinstance(raw, (bytes, memoryview)) else bytes(raw)
+    return Response(
+        content=blob,
+        media_type="application/vnd.apple.pkpass",
+        headers={"Content-Disposition": 'attachment; filename="card.pkpass"'},
+    )
